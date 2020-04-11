@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "operations": [
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_fb93ca81b9d54f7efc76e4c4",
+        "label": "bisexual"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_d8323eb655a98ddd3316e879",
+        "label": "straight"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_c21064664a543100a37d2feab5",
+        "label": "pansexual"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_efc87bc5e36aa53e67555109c",
+        "label": "queer"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_6618228f4fe10bda185e564e",
+        "label": "questioning_sexuality"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_baa35d5987c31b15ae30ebf3",
+        "label": "gay"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_1cbd58281b102bb7955b5fe74",
+        "label": "lesbian"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_10d52ca1ba6f3a943dbb49113",
+        "label": "asexual"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_223d1cb14ff24731ce4ad37f",
+        "label": "aspec"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_e92724fc18a16432f2c88896",
+        "label": "demisexual"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_032e81fe05eb8113d6425171",
+        "label": "polyamorous"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_1eb3f257fb34fecca7aacbde",
+        "label": "enbian"
+      }
+    }
+  ]
+}

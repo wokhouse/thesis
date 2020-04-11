@@ -1,0 +1,111 @@
+{
+  "version": "1.0",
+  "operations": [
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_78dcd9f395c386a98770b1ca",
+        "label": "woman",
+        "query": "woman gnc"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_8c6b0e100f446b3f2c110c1db6",
+        "label": "man"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_2d21d95646693626d6d4e37a",
+        "label": "non-binary"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_77e4389bc7964ffc26196c96",
+        "label": "cisgender"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_fd9d5d394b5734c24979445e",
+        "label": "transgender"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_2a683c35371f01262102d3b9a",
+        "label": "questioning_gender"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_72b713d7eddba2cea5c18a8f",
+        "label": "masculine"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_6545a11053e7b7ca10ba337b0b",
+        "label": "agender"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_98183ee8a6bda4a107a85790d",
+        "label": "genderfluid"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_8675310107dd349e9314acb10ed",
+        "label": "queer_gender"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_83b66c3cefda21082059925e6",
+        "label": "lesbian_gender"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_b4944bfeb9d4c8b797b6102e1",
+        "label": "feminine"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_10d9b3b55af7ec2df3b41824a",
+        "label": "demi"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_f0fcc6c3738ab8e86491c3a4",
+        "label": "gnc"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_dbb446bbde215856a2bfba09",
+        "label": "bigender"
+      }
+    }
+  ]
+}
