@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "operations": [
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_321052e45bfc1cbf4a653793c",
+        "label": "she/her"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_bff7eff4610ca3f7c691f9d106",
+        "label": "he/him"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_b31065b1019104538cb10eec0265",
+        "label": "they/them"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_59e60c0820cbd628edf1cb66",
+        "label": "all"
+      }
+    },
+    {
+      "operation": "insert_topic",
+      "topic": {
+        "topicId": "Topic_869fbeeb917e57ad7307a8fb",
+        "label": "questioning_pronouns"
+      }
+    }
+  ]
+}
