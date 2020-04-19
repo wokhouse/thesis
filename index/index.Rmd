@@ -4,16 +4,14 @@ date: 'May 2020'
 institution: 'Reed College'
 division: 'Philosophy, Religion, Psychology, and Linguistics '
 advisor: 'Vasiliy Safin'
-# If you have more two advisors, un-silence line 7
-#altadvisor: 'Your Other Advisor'
 department: 'Psychology'
 degree: 'Bachelor of Arts'
-title: 'Are Gendered Pronouns Good or Bad? I finally settle this debate once and for all for you fags'
+title: 'Pronouns Good or Bad: Attitudes and Relationships with Gendered Pronouns in Gender-Diverse Undergraduates'
 knit: "bookdown::render_book"
 site: bookdown::bookdown_site
 output: 
-  thesisdown::thesis_pdf: default
-#  thesisdown::thesis_gitbook: default
+#  thesisdown::thesis_pdf: default
+  thesisdown::thesis_gitbook: default
 #  thesisdown::thesis_word: default
 #  thesisdown::thesis_epub: default
 # If you are creating a PDF you'll need to write your preliminary content (e.g., abstract, acknowledgements) here or
@@ -31,7 +29,7 @@ preface: |
   This is an example of a thesis setup to use the reed thesis document class
   (for LaTeX) and the R bookdown package, in general.
 # Specify the location of the bibliography below
-bibliography: bib/thesis.bib
+bibliography: references.bib
 # Download your specific csl file and refer to it in the line below.
 csl: csl/apa.csl
 lot: true
@@ -62,6 +60,7 @@ if(!require(devtools))
 if(!require(thesisdown))
   devtools::install_github("ismayc/thesisdown")
 library(thesisdown)
+library(tidyverse)
 ```
 
 <!-- On ordering the chapter files:
@@ -78,4 +77,6 @@ on chapters.
 
 # Introduction {.unnumbered}
 
-Gendered pronouns words that are used when refering to someone in the third person. 
+Pronouns are small words used in place of nouns in sentences [@noauthor_pronoun_2020]. Gendered pronouns are a type of pronoun that identifies the subject's gender when used [@noauthor_preferred_2019]. For example, in the sentence "she walks the dog," she is the third person pronoun that replaces the subject's name. In English, the most common pronouns are "she," "they," and "he." It is important to note that "they" is widely recognized as both a singular and plural pronoun [@noauthor_they_2019]. 
+
+Gendered pronouns are especially important for transgender and non-binary individuals, since their apperance and gender may not match cisnormative expectations. 

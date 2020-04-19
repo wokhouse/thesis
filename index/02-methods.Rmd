@@ -1,0 +1,9 @@
+# Methods {#methods}
+
+```{r methods_init, include=FALSE}
+source('analysis/qualtrics.R')
+```
+
+*Participants*
+
+`r nrow(mod_data)` undergraduate students from Reed College in Portland, Oregon participated in an online survey about "attitudes towards gendered pronouns." Participants were recruited through online advertisements and posters around campus. Notably, this sample is around one-third of the undergraduate student body. Data colleciton was conducted over a two month period, starting in Febuary 2020. It should be noted that the global pandemic that occured in early 2020 shortened our opportunity to collect data. 
