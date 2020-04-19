@@ -1,11 +1,12 @@
 library(tidyverse)
 library(qualtRics)
 library(rjson)
+library(here)
 
 # fetch survey data from qualtrics
 survey_dat <- fetch_survey(surveyID = "***REMOVED***")
 # read in themes from qualatative analysis
-themes <- fromJSON(file = "index/analysis/themes.json")
+themes <- fromJSON(file = here("index", "analysis", "themes.json"))
 gender_themes <- themes$gender
 pronouns_themes <- themes$pronouns
 sexuality_themes <- themes$sexual
@@ -24,16 +25,26 @@ recode_likert <- function(data) {
                        )
                   )
               ) %>%
-    mutate_at(vars(starts_with(c("Q17"))), 
+    mutate_at(vars(starts_with(c("Q17", "Q14"))), 
               funs(recode(.,
                                  "Always" = 5,
                                  "Often" = 4,
-                                 "Rarely" = 3,
-                                 "Sometimes" = 2,
+                                 "Sometimes" = 3,
+                                 "Rarely" = 2,
                                  "Never" = 1
                           )
                    )
+              ) %>%
+    mutate_at(vars(starts_with(c("Q16"))), 
+              funs(recode(.,
+                          "Very" = 5,
+                          "Considerably" = 4,
+                          "Somewhat" = 3,
+                          "Slightly" = 2,
+                          "Not at all" = 1
               )
+              )
+    )
 }
 
 convert_factors <- function(data) {
@@ -75,7 +86,9 @@ rename_data <- function(data) {
     rename(understand_better = Q33_9) %>%
     rename(profs_share = Q30_1) %>%
     rename(students_share = Q30_2) %>%
-    rename(reed_support = Q30_3) 
+    rename(reed_support = Q30_3) %>%
+    rename(misgendering_freq = Q14_1) %>%
+    rename(misgendering_stigma = Q16_1)
 }
 
 recode_data  <- function(data) {
@@ -167,7 +180,9 @@ select_cols <- function(data) {
       understand_better,
       profs_share,
       students_share,
-      reed_support
+      reed_support,
+      misgendering_freq,
+      misgendering_stigma
       )
     )
 }
@@ -175,12 +190,15 @@ select_cols <- function(data) {
 # if you updated the themes in qualtrics you will need to re-export them and run the themes.js script
 # convert qualatatively coded themes into discrete cols with boolean values
 conv_qual <- function(theme_input, themes) {
+  # add word boundaries so regex doesn't accidentally match "woman" when searching for "man" theme, etc
+  regex_themes <- themes %>% lapply(function (theme) { paste("\\b", theme, "\\b", sep = "" ) })
+  # match themes in each row
   data <- do.call(rbind.data.frame,
-                  lapply(
-                    theme_input, 
-                    # match theme string to vector of themes, will return vector of boolean values indicating matches
-                    function(match_string) { str_detect(match_string, themes) }
-                  )
+    lapply(theme_input, function(match_string) {
+      lapply(regex_themes, function(t) {
+        str_detect(as.character(match_string), t)
+      })
+    })
   )
   # replace NA's with FALSE
   data <- data %>%
@@ -190,9 +208,12 @@ conv_qual <- function(theme_input, themes) {
   data
 }
 
+# process qualatatively identified themes
+# converts string of themes eg. woman,trans,non-binary into bool vals in cols
 process_qual <- function(data) {
   gender_data <- conv_qual(data$gender, gender_themes)
-  pronouns_data <- conv_qual(data$pronouns, pronouns_themes)
+  pronouns_data <- conv_qual(data$pronouns, pronouns_themes) %>%
+    rename("he" = `he/him`, "she" = `she/her`, "they" = `they/them`)
   sexuality_data <- conv_qual(data$sexuality, sexuality_themes)
   
   data <- cbind(data, gender_data, pronouns_data, sexuality_data)

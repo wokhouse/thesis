@@ -1,0 +1,210 @@
+# Results {#results}
+
+```{r results_init, include=FALSE}
+library(thesisdown)
+library(tidyverse)
+library(infer)
+library(broom)
+library(here)
+source(here("index", "analysis", "qualtrics.R"))
+```
+
+## Demographics
+I collected gender-related demographic data by asking participants to write in their gender identity and answer a series of yes/no questions: "Are you cisgender?," "Are you transgender?," and "Is your gender non-binary?" Answering yes on one question did not force the participants to answer no on others—this treated gender identity as a collection of separate, related labels that participants may or may not identify with simultaneously. Responses for the write-in question were qualitatively coded by me. 
+
+```{r gender_descriptives, echo=FALSE}
+qual_nonbinary_n <- sum(mod_data$`non-binary`)
+cisnonbinary <- mod_data %>% filter(cis == 1, nonbinary == 1) %>% nrow()
+transnonbinary <- mod_data %>% filter(trans == 1, nonbinary == 1) %>% nrow()
+```
+Overall, `r sum(mod_data$cis)` participants identified as cisgender, `r sum(mod_data$trans)` identified as transgender, and `r sum(mod_data$nonbinary)` identified their gender as non-binary. It is important to note that there is overlap among these groups. `r transnonbinary` participants said they were transgender and non-binary, `r cisnonbinary` participants said they were cisgender and non-binary, and 1 participant said they were cisgender, transgender, and non-binary. 
+
+The most common gender themes were woman (*N* = `r sum(mod_data$woman)`), man (*N* = `r sum(mod_data$man)`), non-binary (*N* = `r qual_nonbinary_n`), cisgender (*N* = `r sum(mod_data$cisgender)`), transgender (*N* = `r sum(mod_data$transgender)`), questioning (*N* = `r sum(mod_data$questioning_gender)`), masculine (*N* = `r sum(mod_data$masculine)`), agender (*N* = `r sum(mod_data$agender)`), genderfluid (*N* = `r sum(mod_data$genderfluid)`), and queer (*N* = `r sum(mod_data$queer_gender)`). 
+
+## Experiences with Misgendering
+```{r misgendering_descriptives, echo=FALSE}
+cis_descriptives <- mod_data %>%
+  filter(!is.na(misgendering_freq), !is.na(misgendering_stigma), cis == 1) %>%
+  summarise(
+    mean_freq = round(mean(misgendering_freq), digits = 2), 
+    sd_freq = round(sd(misgendering_freq), digits = 2), 
+    mean_stigma = round(mean(misgendering_stigma), digits = 2), 
+    sd_stigma = round(sd(misgendering_stigma), digits = 2), 
+    n = n())
+noncis_descriptives <- mod_data %>%
+  filter(!is.na(misgendering_freq), !is.na(misgendering_stigma), cis == 0) %>%
+  summarise(
+    mean_freq = round(mean(misgendering_freq), digits = 2), 
+    sd_freq = round(sd(misgendering_freq), digits = 2), 
+    mean_stigma = round(mean(misgendering_stigma), digits = 2), 
+    sd_stigma = round(sd(misgendering_stigma), digits = 2), 
+    n = n())
+```
+```{r misgendering_freq, echo=FALSE}
+# misgendering freq in cisgender people
+misgendering_freq_cis <- mod_data %>%
+  filter(!is.na(misgendering_freq), cis == 1) %>%
+  map_df(rev) %>%
+  group_by(misgendering_freq) %>%
+  summarise(n = n()) %>%
+  mutate(cis_freq = round(n / sum(n) * 100, digits = 1)) %>%
+  select(cis_freq)
+# misgendering freq in non-cisgender people
+misgendering_freq_noncis <- mod_data %>%
+  filter(!is.na(misgendering_freq), cis == 0) %>%
+  map_df(rev) %>%
+  group_by(misgendering_freq) %>%
+  summarise(n = n()) %>%
+  mutate(noncis_freq = round(n / sum(n) * 100, digits = 1)) %>%
+  select(misgendering_freq, noncis_freq)
+# comparing cis and non-cis people misgendering frequency
+misgendering_freq_cisvsnoncis <- mod_data %>%
+  t_test(misgendering_freq ~ cis, order = c(0, 1))
+```
+```{r misgendering_stigma, echo=FALSE}
+# misgendering freq in cisgender people
+misgendering_stigma_cis <- mod_data %>%
+  filter(!is.na(misgendering_stigma), cis == 1) %>%
+  map_df(rev) %>%
+  group_by(misgendering_stigma) %>%
+  summarise(n = n()) %>%
+  mutate(cis_stigma = round(n / sum(n) * 100, digits = 1)) %>%
+  select(cis_stigma)
+# misgendering stigma in non-cisgender people
+misgendering_stigma_noncis <- mod_data %>%
+  filter(!is.na(misgendering_stigma), cis == 0) %>%
+  map_df(rev) %>%
+  group_by(misgendering_stigma) %>%
+  summarise(n = n()) %>%
+  mutate(noncis_stigma = round(n / sum(n) * 100, digits = 1)) %>%
+  select(misgendering_stigma, noncis_stigma)
+# comparing cis and non-cis people misgendering stigmauency
+misgendering_stigma_cisvsnoncis <- mod_data %>%
+  t_test(misgendering_stigma ~ cis, order = c(0, 1))
+```
+
+Similar to @mclemoreExperiencesMisgenderingIdentity2015, we had participants report how frequently they were misgendered and how stigmatized misgendering made them feel. However, unlike @mclemoreExperiencesMisgenderingIdentity2015, we administered these questions to cisgender people as well. Independent t-tests were used to compare the cisgender and non-cisgender participants. Non-cisgender participants (*M* = `r noncis_descriptives$mean_freq`, *SD* = `r noncis_descriptives$sd_freq`) reported being misgendered more frequently than cisgender participants (*M* = `r cis_descriptives$mean_freq`, *SD* = `r cis_descriptives$sd_freq`), *t*(`r round(misgendering_freq_cisvsnoncis$t_df)`) = `r round(misgendering_freq_cisvsnoncis$statistic, digits = 1)`, *p* = < 0.001.
+Non-cisgender participants (*M* = `r noncis_descriptives$mean_stigma`, *SD* = `r noncis_descriptives$sd_stigma`) also reported feeling more stigmatized when misgendered than than cisgender participants (*M* = `r cis_descriptives$mean_stigma`, *SD* = `r cis_descriptives$sd_stigma`), *t*(`r round(misgendering_stigma_cisvsnoncis$t_df)`) = `r round(misgendering_stigma_cisvsnoncis$statistic, digits = 1)`, *p* = < 0.001. 
+
+
+<!-- misgendering freq table -->
+```{r, echo=FALSE}
+cbind(misgendering_freq_noncis, misgendering_freq_cis) %>%
+    mutate_at(vars("misgendering_freq"),
+              funs(recode(., "5" = "Always", "4" = "Often", "3" = "Sometimes", "2" = "Rarely", "1" = "Never"))) %>%
+kable(
+  col.names = c("“How often do people ‘misgender’ you?”", "Non-cisgender (%)", "Cisgender (%)"),
+  caption = "Misgendering frequency for non-cisgender and cisgender participants"
+  )
+```
+
+<!-- misgendering stigma table -->
+```{r, echo=FALSE}
+cbind(misgendering_stigma_noncis, misgendering_stigma_cis) %>%
+    mutate_at(vars("misgendering_stigma"),
+              funs(recode(., "5" = "Very", "4" = "Considerably", "3" = "Somewhat", "2" = "Slightly", "1" = "Not at all"))) %>%
+kable(
+  col.names = c("“I feel stigmatized (looked down upon)when I am misgendered.”", "Non-cisgender (%)", "Cisgender (%)"),
+  caption = "Felt stigma when misgendered for non-cisgender and cisgender participants"
+  )
+```
+
+```{r misgendering_freq_chisq, include=FALSE}
+# comparing my data (non-cis) to mclemore data
+# proprtion of responses
+mclemore_study1_misgendering_freq_prop <- c(10.4, 29.6, 27.0, 30.4, 2.6)
+mclemore_study2_misgendering_freq_prop <- c(6.7, 23.9, 25.4, 32.8, 11.2)
+# multiple by sample size
+mclemore_study1_misgendering_freq <- mclemore_study1_misgendering_freq_prop / 100 * 115
+mclemore_study2_misgendering_freq <- mclemore_study2_misgendering_freq_prop / 100 * 134
+# tally our misgendering frequency data
+fung_misgendering_freq <- mod_data %>% 
+  filter(!is.na(misgendering_freq), cis == 0) %>% 
+  group_by(misgendering_freq) %>% 
+  tally() %>% 
+  select(n) %>%
+  rename("fung_misgendering_freq" = n)
+# combine mclemore and our data into a tibble
+all_misgendering_freq <- tibble(mclemore_study1_misgendering_freq,
+                                mclemore_study2_misgendering_freq,
+                                fung_misgendering_freq)
+study1_chisq <- all_misgendering_freq %>% select(mclemore_study1_misgendering_freq, fung_misgendering_freq) %>%
+  chisq.test()
+study2_chisq <- all_misgendering_freq %>% select(mclemore_study2_misgendering_freq, fung_misgendering_freq) %>%
+  chisq.test()
+```
+Pearson's Chi-squared tests were used to compare the misgendering frequency observed in @mclemoreExperiencesMisgenderingIdentity2015 to the non-cisgender participants in the present study. 
+There were significant differences when compared to both the study 1 population, *X<sup>2</sup>* (`r study1_chisq$parameter`, *N* = `r sum(study1_chisq$observed, study1_chisq$expected)`) = `r round(study1_chisq$statistic, digits = 2)`, *p* = `r round(study1_chisq$p.value, digits = 2)`, and the study 2 population, *X<sup>2</sup>* (`r study2_chisq$parameter`, *N* = `r sum(study2_chisq$observed, study2_chisq$expected)`) = `r round(study2_chisq$statistic, digits = 2)`, *p* = `r round(study2_chisq$p.value, digits = 2)`.
+
+```{r misgendering_anova, echo=FALSE}
+misgendering_freq_anova <- aov(misgendering_freq ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman, mod_data) %>%
+  tidy() %>%
+  mutate(p.value = round(p.value, digits = 4))
+misgendering_stigma_anova <- aov(misgendering_stigma ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman, mod_data) %>%
+  tidy() %>%
+  mutate(p.value = round(p.value, digits = 4))
+```
+@mclemore_experiences_2015 performed a one-way ANOVA "to compare differences among three gender groups (transgender men, transgender women, and genderqueer)" in misgendering frequency and felt stigma when misgendered.
+Because I took a different approach to collecting gender-related demographic data, I elected to perform a factorial ANOVA comparing endorsement of several endorsed identities on misgendering frequency and felt stigma. 
+
+There were multiple significant effects of identity endorsement on misgendering frequency. 
+Cisgender, *F*(`r misgendering_freq_anova$df[1]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[1], digits = 2)`, *p* = < 0.001,
+transgender, *F*(`r misgendering_freq_anova$df[2]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[2], digits = 2)`, *p* = < 0.001,
+and non-binary identity, *F*(`r misgendering_freq_anova$df[3]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[3], digits = 2)`, *p* = < 0.001, all demonstrated significant effects. 
+There was no significant effect in women (*p* = `r round(misgendering_freq_anova$p.value[5], digits = 2)`) or men (*p* = `r round(misgendering_freq_anova$p.value[4], digits = 2)`) alone. 
+However, there was a significant effect in transgender women, *F*(`r misgendering_freq_anova$df[7]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[7], digits = 2)`, *p* = < 0.001. 
+There was not a significant effect in transgender men (*p* = `r round(misgendering_freq_anova$p.value[6], digits = 2)`). 
+There was also a significant effect in non-binary women , *F*(`r misgendering_freq_anova$df[7]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[7], digits = 2)`, *p* = `r round(misgendering_freq_anova$p.value[9], digits = 3)`, 
+but not in non-binary men (*p* = `r round(misgendering_freq_anova$p.value[8], digits = 3)`).
+
+There were also multiple sigificant effects of identity endorsement on felt stigma when misgendered. 
+Cisgender, *F*(`r misgendering_stigma_anova$df[1]`, `r tail(misgendering_stigma_anova$df,1)`) = `r round(misgendering_stigma_anova$statistic[1], digits = 2)`, *p* = < 0.001,
+and transgender , *F*(`r misgendering_stigma_anova$df[2]`, `r tail(misgendering_stigma_anova$df,1)`) = `r round(misgendering_stigma_anova$statistic[2], digits = 2)`, *p* = < 0.001, identities demonstrated significant effects. 
+However, non-binary (*p* = `r round(misgendering_stigma_anova$p.value[3], digits = 2)`) identity did not show a significant effect. 
+Neither men (*p* = `r round(misgendering_stigma_anova$p.value[4], digits = 2)`) nor women (*p* = `r round(misgendering_stigma_anova$p.value[5], digits = 2)`) alone showed significant effects, nor did trans women (*p* = `r round(misgendering_stigma_anova$p.value[7], digits = 2)`). 
+However, trans men, *F*(`r misgendering_stigma_anova$df[6]`, `r tail(misgendering_stigma_anova$df,1)`) = `r round(misgendering_stigma_anova$statistic[6], digits = 2)`, *p* = < 0.001, demonstrated a significant effect.
+Neither non-binary men (*p* = `r round(misgendering_stigma_anova$p.value[8], digits = 2)`) nor non-binary women (*p* = `r round(misgendering_stigma_anova$p.value[9], digits = 2)`) demonstrated a significant effect. 
+
+```{r misgendering_pronoun_anova, echo = FALSE}
+# run factorial anova on pronouns
+misgendering_pronoun_anova_raw <- mod_data %>%
+  select(misgendering_freq, cis, he, she, they) %>%
+  mutate(cis = factor(cis), he = factor(he), she = factor(she), they = factor(they)) %>%
+  aov(misgendering_freq ~ he + they + cis:he + cis:they, .)
+# tidy anova data
+misgendering_pronoun_anova <- misgendering_pronoun_anova_raw %>% tidy()
+# run and tidy tukey test
+misgendering_pronoun_tukey <- misgendering_pronoun_anova_raw %>%
+  TukeyHSD() %>%
+  tidy()
+```
+
+Unlike @mclemoreExperiencesMisgenderingIdentity2015, I also collected participants pronouns. This allowed me to perform a factorial ANOVA with a follow-up Tukey test to examine pronouns, independent of gender, had an effect on misgendering frequency. I will finish this paragraph later lol once i figure out if it's actually relevant or not lol.
+
+
+## Gender Congruence
+@kozeeMeasuringTransgenderIndividuals2012 developed the TCS (Transgender Congruence Scale) to measure transgender individuals' relationship and comfort between their inner gender identity, physical appearance, and social experience of gender. In this study, the TCS was administered to cisgender participants as well. 
+
+```{r congruence_descriptives, echo = FALSE}
+cong_desc <- mod_data %>%
+  filter(!is.na(congruence)) %>%
+  group_by(cisgender) %>%
+  summarise(mean_cong = mean(congruence), sd_cong = sd(congruence)) %>%
+  mutate_if(is.numeric, round, digits = 2)
+cong_ttest <- mod_data %>%
+  filter(!is.na(congruence)) %>%
+  t_test(congruence ~ cis, order = c(0,1)) %>%
+  mutate_if(is.numeric, round, digits = 2)
+# congruence anova
+cong_anova <- mod_data %>%
+  aov(congruence ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman, .) %>%
+  tidy() %>%
+  mutate_if(is.numeric, round, digits = 2)
+```
+
+A single sample t-test revealed that non-cisgender participants (*M* = `r cong_desc$mean_cong[1]`, *SD* = `r cong_desc$sd_cong[1]`) scored lower on the TCS than cisgender participants (*M* = `r cong_desc$mean_cong[2]`, *SD* = `r cong_desc$sd_cong[2]`), *t*(`r cong_ttest$t_df`) = `r cong_ttest$statistic`, *p* = < 0.001. 
+
+A factorial ANOVA demonstrated significant effects of cisgender, *F*(`r cong_anova$df[1]`, `r tail(cong_anova$df,1)`) = `r cong_anova$statistic[1]`, *p* = < 0.001,
+and non-binary identification, *F*(`r cong_anova$df[3]`, `r tail(cong_anova$df,1)`) = `r cong_anova$statistic[3]`, *p* = < 0.001, 
+but not of transgender identification (*p* = `r cong_anova$p.value[2]`). 
+There were also no significant effects in men (*p* = `r cong_anova$p.value[4]`), women (*p* = `r cong_anova$p.value[5]`), trans men (*p* = `r cong_anova$p.value[6]`), trans women (*p* = `r cong_anova$p.value[7]`), non-binary men (*p* = `r cong_anova$p.value[8]`), and non-binary women (*p* = `r cong_anova$p.value[9]`). 
