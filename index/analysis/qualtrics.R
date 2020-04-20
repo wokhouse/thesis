@@ -102,32 +102,16 @@ recode_data  <- function(data) {
            # recode blank rows as prefer not to say
            ethnicity = gsub("^$", "Prefer not to say", ethnicity)
     ) %>%
-    mutate(nonbinary = recode(Q6, "Yes" = 1, "No" = 0, .default = 0)) %>%
-    mutate(trans = recode(Q5, "Yes" = 1, "No" = 0, .default = 0)) %>%
-    mutate(cis = recode(Q4, "Yes" = 1, "No" = 0, .default = 0)) %>%
-    mutate(pronoun_code = recode(pronouns,
-                                 "he/him" = "he/him",
-                                 "she/her" = "she/her",
-                                 "they/them" = "they/them",
-                                 "she/her,they/them" = "she/her & they/them",
-                                 "they/them,she/her" = "she/her & they/them",
-                                 "he/him,they/them" = "he/him & they/them",
-                                 "they/them,he/him" = "he/him & they/them",
-                                 "all" = "all",
-                                 .default = "other/multiple"
-    )) %>%
-    mutate(gender_code = recode(gender,
-                                "woman" = "woman",
-                                "woman,cis" = "woman",
-                                "woman,trans" = "woman",
-                                "woman,cis,queer" = "woman",
-                                "woman,cis,questioning" = "woman",
-                                "woman,queer" = "woman",
-                                "man" = "man",
-                                "man,cis" = "man",
-                                "man,trans" = "man",
-                                .default = "non-binary"
-    ))
+    # recode raw values
+    mutate(nonbinary = recode(Q6, "Yes" = TRUE, "No" = FALSE, .default = FALSE)) %>%
+    mutate(trans = recode(Q5, "Yes" = TRUE, "No" = FALSE, .default = FALSE)) %>%
+    mutate(cis = recode(Q4, "Yes" = TRUE, "No" = FALSE, .default = FALSE)) %>%
+    # convert to factors and add labels
+    mutate(
+      nonbinary = factor(nonbinary),
+      trans = factor(trans),
+      cis = factor(cis)
+    )
 }
 
 calc_scores <- function(data) {
@@ -146,8 +130,6 @@ select_cols <- function(data) {
   data %>%
     select(c(
       timestamp,
-      gender_code,
-      pronoun_code,
       age,
       ethnicity,
       pronouns,
@@ -191,12 +173,18 @@ select_cols <- function(data) {
 # convert qualatatively coded themes into discrete cols with boolean values
 conv_qual <- function(theme_input, themes) {
   # add word boundaries so regex doesn't accidentally match "woman" when searching for "man" theme, etc
-  regex_themes <- themes %>% lapply(function (theme) { paste("\\b", theme, "\\b", sep = "" ) })
+  regex_themes <- themes %>% lapply(function (theme) { paste("\\b", theme, "\\b", sep = "") })
   # match themes in each row
   data <- do.call(rbind.data.frame,
     lapply(theme_input, function(match_string) {
       lapply(regex_themes, function(t) {
-        str_detect(as.character(match_string), t)
+        if (is.na(match_string)) {
+          # if participant left write in blank, set all values to false
+          factor(FALSE, levels = c(FALSE, TRUE))
+        } else {
+          # otherwise, check to see if there is a match for each theme
+          factor(str_detect(as.character(match_string), t), levels = c(FALSE, TRUE))
+        }
       })
     })
   )
