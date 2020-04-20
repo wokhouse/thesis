@@ -13,13 +13,11 @@ source(here("index", "analysis", "qualtrics.R"))
 I collected gender-related demographic data by asking participants to write in their gender identity and answer a series of yes/no questions: "Are you cisgender?," "Are you transgender?," and "Is your gender non-binary?" Answering yes on one question did not force the participants to answer no on others—this treated gender identity as a collection of separate, related labels that participants may or may not identify with simultaneously. Responses for the write-in question were qualitatively coded by me. 
 
 ```{r gender_descriptives, echo=FALSE}
-qual_nonbinary_n <- sum(mod_data$`non-binary`)
-cisnonbinary <- mod_data %>% filter(cis == 1, nonbinary == 1) %>% nrow()
-transnonbinary <- mod_data %>% filter(trans == 1, nonbinary == 1) %>% nrow()
+qual_nonbinary_n <- mod_data %>% filter(`non-binary` == TRUE) %>% nrow()
 ```
-Overall, `r sum(mod_data$cis)` participants identified as cisgender, `r sum(mod_data$trans)` identified as transgender, and `r sum(mod_data$nonbinary)` identified their gender as non-binary. It is important to note that there is overlap among these groups. `r transnonbinary` participants said they were transgender and non-binary, `r cisnonbinary` participants said they were cisgender and non-binary, and 1 participant said they were cisgender, transgender, and non-binary. 
+Overall, `r mod_data %>% filter(cis == TRUE) %>% nrow()` participants identified as cisgender, `r mod_data %>% filter(trans == TRUE) %>% nrow()` identified as transgender, and `r mod_data %>% filter(nonbinary == TRUE) %>% nrow()` identified their gender as non-binary. It is important to note that there is overlap among these groups. `r mod_data %>% filter(trans == TRUE, nonbinary == TRUE) %>% nrow()` participants said they were transgender and non-binary, `r mod_data %>% filter(cis == TRUE, nonbinary == TRUE) %>% nrow()` participants said they were cisgender and non-binary, and 1 participant said they were cisgender, transgender, and non-binary. 
 
-The most common gender themes were woman (*N* = `r sum(mod_data$woman)`), man (*N* = `r sum(mod_data$man)`), non-binary (*N* = `r qual_nonbinary_n`), cisgender (*N* = `r sum(mod_data$cisgender)`), transgender (*N* = `r sum(mod_data$transgender)`), questioning (*N* = `r sum(mod_data$questioning_gender)`), masculine (*N* = `r sum(mod_data$masculine)`), agender (*N* = `r sum(mod_data$agender)`), genderfluid (*N* = `r sum(mod_data$genderfluid)`), and queer (*N* = `r sum(mod_data$queer_gender)`). 
+The most common gender themes were woman (*N* = `r mod_data %>% filter(woman == TRUE) %>% nrow()`), man (*N* = `r mod_data %>% filter(man == TRUE) %>% nrow()`), non-binary (*N* = `r qual_nonbinary_n`), cisgender (*N* = `r mod_data %>% filter(cisgender == TRUE) %>% nrow()`), transgender (*N* = `r mod_data %>% filter(transgender == TRUE) %>% nrow()`), questioning (*N* = `r mod_data %>% filter(questioning_gender == TRUE) %>% nrow()`), masculine (*N* = `r mod_data %>% filter(masculine == TRUE) %>% nrow()`), agender (*N* = `r mod_data %>% filter(agender == TRUE) %>% nrow()`), genderfluid (*N* = `r mod_data %>% filter(genderfluid == TRUE) %>% nrow()`), and queer (*N* = `r mod_data %>% filter(queer_gender == TRUE) %>% nrow()`). 
 
 ## Experiences with Misgendering
 ```{r misgendering_descriptives, echo=FALSE}
@@ -59,7 +57,7 @@ misgendering_freq_noncis <- mod_data %>%
   select(misgendering_freq, noncis_freq)
 # comparing cis and non-cis people misgendering frequency
 misgendering_freq_cisvsnoncis <- mod_data %>%
-  t_test(misgendering_freq ~ cis, order = c(0, 1))
+  t_test(misgendering_freq ~ cis, order = c(FALSE, TRUE))
 ```
 ```{r misgendering_stigma, echo=FALSE}
 # misgendering freq in cisgender people
@@ -80,7 +78,7 @@ misgendering_stigma_noncis <- mod_data %>%
   select(misgendering_stigma, noncis_stigma)
 # comparing cis and non-cis people misgendering stigmauency
 misgendering_stigma_cisvsnoncis <- mod_data %>%
-  t_test(misgendering_stigma ~ cis, order = c(0, 1))
+  t_test(misgendering_stigma ~ cis, order = c(FALSE, TRUE))
 ```
 
 Similar to @mclemoreExperiencesMisgenderingIdentity2015, we had participants report how frequently they were misgendered and how stigmatized misgendering made them feel. However, unlike @mclemoreExperiencesMisgenderingIdentity2015, we administered these questions to cisgender people as well. Independent t-tests were used to compare the cisgender and non-cisgender participants. Non-cisgender participants (*M* = `r noncis_descriptives$mean_freq`, *SD* = `r noncis_descriptives$sd_freq`) reported being misgendered more frequently than cisgender participants (*M* = `r cis_descriptives$mean_freq`, *SD* = `r cis_descriptives$sd_freq`), *t*(`r round(misgendering_freq_cisvsnoncis$t_df)`) = `r round(misgendering_freq_cisvsnoncis$statistic, digits = 1)`, *p* = < 0.001.
@@ -119,7 +117,7 @@ mclemore_study1_misgendering_freq <- mclemore_study1_misgendering_freq_prop / 10
 mclemore_study2_misgendering_freq <- mclemore_study2_misgendering_freq_prop / 100 * 134
 # tally our misgendering frequency data
 fung_misgendering_freq <- mod_data %>% 
-  filter(!is.na(misgendering_freq), cis == 0) %>% 
+  filter(!is.na(misgendering_freq), cis == TRUE) %>% 
   group_by(misgendering_freq) %>% 
   tally() %>% 
   select(n) %>%
@@ -193,7 +191,7 @@ cong_desc <- mod_data %>%
   mutate_if(is.numeric, round, digits = 2)
 cong_ttest <- mod_data %>%
   filter(!is.na(congruence)) %>%
-  t_test(congruence ~ cis, order = c(0,1)) %>%
+  t_test(congruence ~ cis, order = c(FALSE, TRUE)) %>%
   mutate_if(is.numeric, round, digits = 2)
 # congruence anova
 cong_anova <- mod_data %>%
@@ -211,7 +209,7 @@ There were also no significant effects in men (*p* = `r cong_anova$p.value[4]`),
 
 ## Transgender Inclusive Behaviors
 
-```{r inclusive_results, echo = FALSE}
+```{r inclusive_results, echo = FALSE, include = FALSE}
 inclusive_desc <- mod_data %>%
   filter(!is.na(inclusive_behavior)) %>%
   group_by(cis) %>%
@@ -219,7 +217,7 @@ inclusive_desc <- mod_data %>%
   mutate_if(is.numeric, round, digits = 2)
 inclusive_ttest <- mod_data %>%
   filter(!is.na(inclusive_behavior)) %>%
-  t_test(inclusive_behavior ~ cis, order = c(1,0)) %>%
+  t_test(inclusive_behavior ~ cis, order = c(FALSE, TRUE)) %>%
   mutate_if(is.numeric, round, digits = 2)
 # congruence anova
 inclusive_anova <- mod_data %>%
