@@ -185,7 +185,7 @@ Unlike @mclemoreExperiencesMisgenderingIdentity2015, I also collected participan
 ## Gender Congruence
 @kozeeMeasuringTransgenderIndividuals2012 developed the TCS (Transgender Congruence Scale) to measure transgender individuals' relationship and comfort between their inner gender identity, physical appearance, and social experience of gender. In this study, the TCS was administered to cisgender participants as well. 
 
-```{r congruence_descriptives, echo = FALSE}
+```{r congruence_results, echo = FALSE}
 cong_desc <- mod_data %>%
   filter(!is.na(congruence)) %>%
   group_by(cisgender) %>%
@@ -197,7 +197,7 @@ cong_ttest <- mod_data %>%
   mutate_if(is.numeric, round, digits = 2)
 # congruence anova
 cong_anova <- mod_data %>%
-  aov(congruence ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman, .) %>%
+  aov(congruence ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman + ethnicity + year + major + age, .) %>%
   tidy() %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
@@ -208,3 +208,56 @@ A factorial ANOVA demonstrated significant effects of cisgender, *F*(`r cong_ano
 and non-binary identification, *F*(`r cong_anova$df[3]`, `r tail(cong_anova$df,1)`) = `r cong_anova$statistic[3]`, *p* = < 0.001, 
 but not of transgender identification (*p* = `r cong_anova$p.value[2]`). 
 There were also no significant effects in men (*p* = `r cong_anova$p.value[4]`), women (*p* = `r cong_anova$p.value[5]`), trans men (*p* = `r cong_anova$p.value[6]`), trans women (*p* = `r cong_anova$p.value[7]`), non-binary men (*p* = `r cong_anova$p.value[8]`), and non-binary women (*p* = `r cong_anova$p.value[9]`). 
+
+## Transgender Inclusive Behaviors
+
+```{r inclusive_results, echo = FALSE}
+inclusive_desc <- mod_data %>%
+  filter(!is.na(inclusive_behavior)) %>%
+  group_by(cis) %>%
+  summarise(mean_inc = mean(inclusive_behavior), sd_inc = sd(inclusive_behavior), n = n()) %>%
+  mutate_if(is.numeric, round, digits = 2)
+inclusive_ttest <- mod_data %>%
+  filter(!is.na(inclusive_behavior)) %>%
+  t_test(inclusive_behavior ~ cis, order = c(1,0)) %>%
+  mutate_if(is.numeric, round, digits = 2)
+# congruence anova
+inclusive_anova <- mod_data %>%
+  aov(inclusive_behavior ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman + ethnicity + year + major + age, .) %>%
+  tidy() %>%
+  mutate_if(is.numeric, round, digits = 2)
+# congruence tukey
+inclusive_desc_more <- mod_data %>%
+  filter(!is.na(inclusive_behavior)) %>%
+  group_by(cis, man, woman, nonbinary, trans) %>%
+  summarise(mean_inc = mean(inclusive_behavior), sd_inc = sd(inclusive_behavior), n = n()) %>%
+  mutate_if(is.numeric, round, digits = 2)
+inclusive_tukey <- mod_data %>%
+  filter(!is.na(inclusive_behavior)) %>%
+#  mutate_at(vars(c(man, woman, nonbinary, cis, trans)), factor) %>%
+  mutate(
+    cis = factor(man, labels = c("", "cis")),
+    man = factor(man, labels =  c("", "man")),
+    woman = factor(woman, labels =  c("", "woman")),
+    nonbinary = factor(nonbinary, labels =  c("", "nonbinary")),
+    trans = factor(trans, labels =  c("", "trans")),
+  ) %>%
+  aov(inclusive_behavior ~ cis:nonbinary:trans:man:woman, .) %>%
+  TukeyHSD() %>%
+  tidy()
+inclusive_tukey_signif <- inclusive_tukey %>%
+  filter(adj.p.value < 0.05)
+```
+
+@kattariDevelopmentValidationTransgender2018 developed the Transgender Inclusive Behavior Scale (TIBS) as a method of quantifying the number of behaviors that may support and include transgender people that one regularly does. Scores are a sum of responses on a series of five-point likert scales ranging from "Never" to "Often."
+
+A single-sample t-test revealed that non-cisgender people (*M* = `r inclusive_desc$mean_inc[1]`, *SD* = `r inclusive_desc$sd_inc[1]`) reporting performing more inclusive behaviors than cisgender people (*M* = `r inclusive_desc$mean_inc[2]`, *SD* = `r inclusive_desc$sd_inc[2]`), *t*(`r inclusive_ttest$t_df`) = `r inclusive_ttest$statistic`, *p* = < 0.001.
+
+A factorial ANOVA demonstrated several significant effects of gender identity on TIBS scores. There were significant effects in cisgender, *F*(`r inclusive_anova$df[1]`, `r tail(inclusive_anova$df, 1)`) = `r inclusive_anova$statistic[1]`, *p* = < 0.001, transgender, non-binary, *F*(`r inclusive_anova$df[2]`, `r tail(inclusive_anova$df, 1)`) = `r inclusive_anova$statistic[2]`, *p* = < 0.01, man, *F*(`r inclusive_anova$df[3]`, `r tail(inclusive_anova$df, 1)`) = `r inclusive_anova$statistic[3]`, *p* = < 0.01, and woman, *F*(`r inclusive_anova$df[2]`, `r tail(inclusive_anova$df, 1)`) = `r inclusive_anova$statistic[2]`, *p* = `r inclusive_anova$p.value[5]`, groups. There was also a significant effect in trans men, *F*(`r inclusive_anova$df[10]`, `r tail(inclusive_anova$df, 1)`) = `r inclusive_anova$statistic[10]`, *p* = `r inclusive_anova$p.value[10]`, but not trans women (*p* = `r inclusive_anova$p.value[11]`). There were no significant effects in non-binary men (*p* = `r inclusive_anova$p.value[12]`) nor non-binary women (*p* = `r inclusive_anova$p.value[12]`).
+
+A Tukey post-hoc comparison was used to compare cisgender and non-cisgender men, women, and non-binary people. There were significant gender differences in inclusive behavior. Cisgender men (*M* = `r inclusive_desc_more$mean_inc[17]`, *SD* = `r inclusive_desc_more$sd_inc[17]`) perform inclusive behaviors less often than non-binary people (*M* = `r inclusive_desc_more$mean_inc[2]`, *SD* = `r inclusive_desc_more$sd_inc[2]`), transgender non-binary people (*M* = `r inclusive_desc_more$mean_inc[3]`, *SD* = `r inclusive_desc_more$sd_inc[3]`), trans men (*M* = `r inclusive_desc_more$mean_inc[9]`, *SD* = `r inclusive_desc_more$sd_inc[9]`), non-binary women (*M* = `r inclusive_desc_more$mean_inc[6]`, *SD* = `r inclusive_desc_more$sd_inc[6]`), non-binary transgender women (*M* = `r inclusive_desc_more$mean_inc[7]`, *SD* = `r inclusive_desc_more$sd_inc[7]`), non-binary trans men (*M* = `r inclusive_desc_more$mean_inc[11]`, *SD* = `r inclusive_desc_more$sd_inc[11]`), and cisgender women (*M* = `r inclusive_desc_more$mean_inc[14]`, *SD* = `r inclusive_desc_more$sd_inc[14]`).
+Non-binary people (*M* = `r inclusive_desc_more$mean_inc[2]`, *SD* = `r inclusive_desc_more$sd_inc[2]`) performed inclusive behaviors more often than non-cisgender women (*M* = `r inclusive_desc_more$mean_inc[4]`, *SD* = `r inclusive_desc_more$sd_inc[4]`).
+
+## Pronouns
+
+I administered a series of questions about comfort with and relationships towards gendered pronouns. 
