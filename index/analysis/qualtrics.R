@@ -171,7 +171,7 @@ select_cols <- function(data) {
 
 # if you updated the themes in qualtrics you will need to re-export them and run the themes.js script
 # convert qualatatively coded themes into discrete cols with boolean values
-conv_qual <- function(theme_input, themes) {
+conv_qual <- function(theme_input, themes, prefix) {
   # add word boundaries so regex doesn't accidentally match "woman" when searching for "man" theme, etc
   regex_themes <- themes %>% lapply(function (theme) { paste("\\b", theme, "\\b", sep = "") })
   # match themes in each row
@@ -191,18 +191,20 @@ conv_qual <- function(theme_input, themes) {
   # replace NA's with FALSE
   data <- data %>%
     replace(is.na(data), FALSE)
+  # create colnames by prepending prefix to themes
+  theme_colnames <- themes %>% lapply(function (theme) { paste(prefix, ".", theme, sep = "") })
   # set col names to themes
-  colnames(data) <- themes
+  colnames(data) <- theme_colnames
   data
 }
 
 # process qualatatively identified themes
 # converts string of themes eg. woman,trans,non-binary into bool vals in cols
 process_qual <- function(data) {
-  gender_data <- conv_qual(data$gender, gender_themes)
-  pronouns_data <- conv_qual(data$pronouns, pronouns_themes) %>%
-    rename("he" = `he/him`, "she" = `she/her`, "they" = `they/them`)
-  sexuality_data <- conv_qual(data$sexuality, sexuality_themes)
+  gender_data <- conv_qual(data$gender, gender_themes, prefix = "gender")
+  pronouns_data <- conv_qual(data$pronouns, pronouns_themes, prefix = "pronoun") %>%
+    rename("pronoun.he" = `pronoun.he/him`, "pronoun.she" = `pronoun.she/her`, "pronoun.they" = `pronoun.they/them`)
+  sexuality_data <- conv_qual(data$sexuality, sexuality_themes, prefix = "sexuality")
   
   data <- cbind(data, gender_data, pronouns_data, sexuality_data)
 }
@@ -212,21 +214,21 @@ bin_genders <- function(data) {
     # bin genders into cis man, cis woman, trans man, trans woman, cis 
     mutate(gender_bin = factor(case_when(
       # cis == TRUE & nonbinary == FALSE & trans == FALSE & man == FALSE & woman == FALSE ~ "Cis",
-      cis == TRUE & nonbinary == FALSE & trans == FALSE & man == TRUE & woman == FALSE ~ "Cis Man",
-      cis == TRUE & nonbinary == FALSE & trans == FALSE & man == FALSE & woman == TRUE ~ "Cis Woman",
-      cis == FALSE & trans == TRUE & man == TRUE & woman == FALSE ~ "Trans Man",
-      cis == FALSE & trans == TRUE & man == FALSE & woman == TRUE ~ "Trans Woman",
+      cis == TRUE & nonbinary == FALSE & trans == FALSE & gender.man == TRUE & gender.woman == FALSE ~ "Cis Man",
+      cis == TRUE & nonbinary == FALSE & trans == FALSE & gender.man == FALSE & gender.woman == TRUE ~ "Cis Woman",
+      cis == FALSE & trans == TRUE & gender.man == TRUE & gender.woman == FALSE ~ "Trans Man",
+      cis == FALSE & trans == TRUE & gender.man == FALSE & gender.woman == TRUE ~ "Trans Woman",
       cis == TRUE & nonbinary == TRUE & trans == FALSE ~ "Cis Non-binary",
       # non-binary bin includes participants who only marked non-binary and participants who marked none
       # i also decided to fold non-binary men and non-binary women into the non-binary group since there
       # didn't seem to be a lot of differences (left commented tests at bottom of file)
       cis == FALSE & nonbinary == TRUE & trans == FALSE ~ "Non-binary",
       cis == FALSE & nonbinary == FALSE & trans == FALSE ~ "Non-binary",
-      cis == FALSE & nonbinary == TRUE & trans == TRUE & man == FALSE & woman == FALSE ~ "Trans Non-binary",
-      # cis == FALSE & nonbinary == TRUE & trans == FALSE & man == TRUE & woman == FALSE ~ "Non-binary Man",
-      # cis == FALSE & nonbinary == FALSE & trans == FALSE & man == TRUE & woman == FALSE ~ "Non-binary Man",
-      # cis == FALSE & nonbinary == TRUE & trans == FALSE & man == FALSE & woman == TRUE ~ "Non-binary Woman",
-      # cis == FALSE & nonbinary == FALSE & trans == FALSE & man == FALSE & woman == TRUE ~ "Non-binary Woman",
+      cis == FALSE & nonbinary == TRUE & trans == TRUE & gender.man == FALSE & gender.woman == FALSE ~ "Trans Non-binary",
+      # cis == FALSE & nonbinary == TRUE & trans == FALSE & gender.man == TRUE & gender.woman == FALSE ~ "Non-binary Man",
+      # cis == FALSE & nonbinary == FALSE & trans == FALSE & gender.man == TRUE & gender.woman == FALSE ~ "Non-binary Man",
+      # cis == FALSE & nonbinary == TRUE & trans == FALSE & gender.man == FALSE & gender.woman == TRUE ~ "Non-binary Woman",
+      # cis == FALSE & nonbinary == FALSE & trans == FALSE & gender.man == FALSE & gender.woman == TRUE ~ "Non-binary Woman",
       TRUE ~ "other"
     ), levels = c("Cis", "Cis Man","Cis Woman","Trans Man","Trans Woman", "Cis Non-binary", "Non-binary","Trans Non-binary", "Non-binary Man", "Non-binary Woman")))
 }
