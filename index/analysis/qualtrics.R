@@ -207,6 +207,30 @@ process_qual <- function(data) {
   data <- cbind(data, gender_data, pronouns_data, sexuality_data)
 }
 
+bin_genders <- function(data) {
+  data %>%
+    # bin genders into cis man, cis woman, trans man, trans woman, cis 
+    mutate(gender_bin = factor(case_when(
+      # cis == TRUE & nonbinary == FALSE & trans == FALSE & man == FALSE & woman == FALSE ~ "Cis",
+      cis == TRUE & nonbinary == FALSE & trans == FALSE & man == TRUE & woman == FALSE ~ "Cis Man",
+      cis == TRUE & nonbinary == FALSE & trans == FALSE & man == FALSE & woman == TRUE ~ "Cis Woman",
+      cis == FALSE & trans == TRUE & man == TRUE & woman == FALSE ~ "Trans Man",
+      cis == FALSE & trans == TRUE & man == FALSE & woman == TRUE ~ "Trans Woman",
+      cis == TRUE & nonbinary == TRUE & trans == FALSE ~ "Cis Non-binary",
+      # non-binary bin includes participants who only marked non-binary and participants who marked none
+      # i also decided to fold non-binary men and non-binary women into the non-binary group since there
+      # didn't seem to be a lot of differences (left commented tests at bottom of file)
+      cis == FALSE & nonbinary == TRUE & trans == FALSE ~ "Non-binary",
+      cis == FALSE & nonbinary == FALSE & trans == FALSE ~ "Non-binary",
+      cis == FALSE & nonbinary == TRUE & trans == TRUE & man == FALSE & woman == FALSE ~ "Trans Non-binary",
+      # cis == FALSE & nonbinary == TRUE & trans == FALSE & man == TRUE & woman == FALSE ~ "Non-binary Man",
+      # cis == FALSE & nonbinary == FALSE & trans == FALSE & man == TRUE & woman == FALSE ~ "Non-binary Man",
+      # cis == FALSE & nonbinary == TRUE & trans == FALSE & man == FALSE & woman == TRUE ~ "Non-binary Woman",
+      # cis == FALSE & nonbinary == FALSE & trans == FALSE & man == FALSE & woman == TRUE ~ "Non-binary Woman",
+      TRUE ~ "other"
+    ), levels = c("Cis", "Cis Man","Cis Woman","Trans Man","Trans Woman", "Cis Non-binary", "Non-binary","Trans Non-binary", "Non-binary Man", "Non-binary Woman")))
+}
+
 mod_data <- survey_dat %>%
   filter(Finished == TRUE) %>%
   recode_likert() %>%
@@ -216,7 +240,16 @@ mod_data <- survey_dat %>%
   calc_scores() %>%
   select_cols() %>%
   process_qual() %>%
+  bin_genders() %>%
   filter(year != "Other") %>%
   arrange(timestamp)
-  
 
+# mod_data %>%
+#   filter(gender_bin == "Non-binary" | gender_bin == "Cis Non-binary") %>%
+#   aov(congruence ~ gender_bin, .) %>%
+#   TukeyHSD() %>%
+#   tidy() %>%
+#   view()
+# mod_data %>%
+#   select(cis, nonbinary, trans, man, woman, gender_bin) %>%
+#   view()
