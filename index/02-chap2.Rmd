@@ -1,4 +1,4 @@
-# Methods {#methods}
+# Methods 
 
 ```{r methods_init, include=FALSE}
 library(knitr)
