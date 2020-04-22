@@ -25,6 +25,20 @@ Overall, `r mod_data %>% filter(cis == TRUE) %>% nrow()` participants identified
 
 Qualitative themes were decided by the author after examining the data and consulting with a number of gender-diverse peers. The most commonly occuring themes were woman (*N* = `r mod_data %>% filter(gender.woman == TRUE) %>% nrow()`), man (*N* = `r mod_data %>% filter(gender.man == TRUE) %>% nrow()`), non-binary (*N* = `r qual_nonbinary_n`), cisgender (*N* = `r mod_data %>% filter(gender.cisgender == TRUE) %>% nrow()`), transgender (*N* = `r mod_data %>% filter(gender.transgender == TRUE) %>% nrow()`), questioning (*N* = `r mod_data %>% filter(gender.questioning_gender == TRUE) %>% nrow()`), masculine (*N* = `r mod_data %>% filter(gender.masculine == TRUE) %>% nrow()`), agender (*N* = `r mod_data %>% filter(gender.agender == TRUE) %>% nrow()`), genderfluid (*N* = `r mod_data %>% filter(gender.genderfluid == TRUE) %>% nrow()`), and queer (*N* = `r mod_data %>% filter(gender.queer_gender == TRUE) %>% nrow()`). 
 
+For the purposes of analysis, seven artificial gender groups were created: cisgender man, cisgender woman, transgender man, transgender woman, cisgender non-binary person, non-binary person, and transgender non-binary person. 
+
+The cisgender man and cisgender woman groups include all participants that only indicate that they were cisgender and indicated that they were a man or woman in the write-in gender field. The transgender man and transgender woman groups include all participants that only indicate that they were transgender and indicated that they were a man or woman in the write-in gender field. The cisgender non-binary group includes all participants who indicated that they were cisgender and non-binary. This group includes cisgender non-binary men and cisgender non-binary women. The non-binary group includes all participants that only indicated that they were non-binary, as well as participants who indicated that they were neither cisgender nor transgender. This group includes non-binary men and non-binary women. The transgender non-binary group includes all participants that indicated that they were non-binary and transgender. This group includes transgender non-binary men and transgender non-binary women.
+```{r, echo = FALSE}
+mod_data %>%
+  filter(!is.na(gender_bin)) %>%
+  group_by(gender_bin) %>%
+  tally() %>%
+  arrange(-n) %>%
+  kable(
+    col.names = c("Gender Bin", "N")
+  )
+```
+
 ### Pronouns
 Participants were asked their pronouns in a write-in box. Pronouns were qualitatively coded by the author. No participants reported using any other pronouns besides he/him, she/her, and they/them. However, many participants reported using multiple pronouns. 
 ```{r, echo = FALSE}
@@ -52,14 +66,12 @@ mod_data %>%
 ```
 
 ### Sexuality
-Participants were asked to report their sexuality in a write-in field. Responses were qualitatively coded by the author. 
+Participants were asked to report their sexuality in a write-in field. Responses were qualitatively coded by the author. Responses were coded with as many themes as 
 ```{r, echo = FALSE}
 sexuality_labels <- data.frame(label = c("Bisexual", "Straight", "Pansexual", "Queer", "Questioning", "Gay", "Lesbian", "Asexual", "Aspec"))
 mod_data %>%
   select(starts_with("sexuality.")) %>%
-  filter_at(vars(everything()), all_vars(!is.na(.))) %>%
-  mutate_all(as.logical) %>%
-  summarise_all(sum) %>%
+  summarise_all(function(x) sum(x == TRUE, na.rm = TRUE)) %>%
   select(-c(sexuality.demisexual, sexuality.polyamorous, sexuality.enbian)) %>%
   pivot_longer(everything(), names_to = "sexuality", values_to = "n") %>%
   cbind(sexuality_labels) %>%
@@ -68,6 +80,19 @@ mod_data %>%
     col.names = c("Sexuality", "N")
   )
 ```
+
+```{r genderandsexuality_inorder, echo = FALSE}
+genderandsexuality_inorder <- mod_data %>%
+  filter(!is.na(gender_bin)) %>%
+  group_by(gender_bin) %>%
+  select(gender_bin, starts_with("sexuality.")) %>%
+  summarise_all(function(x) sum(x == TRUE, na.rm = TRUE)) %>%
+  pivot_wider(names_from = gender_bin, values_from = -c(gender_bin)) %>%
+  pivot_longer(everything(), names_to = "group", values_to = "n") %>%
+  arrange(-n) %>%
+  mutate(t = paste("(*N* = ", n, ")", sep = ""))
+```
+The most common gender and sexualities were bisexual cisgender women, `r genderandsexuality_inorder$t[1]`, straight cisgender men, `r genderandsexuality_inorder$t[2]`, straight cisgender women, `r genderandsexuality_inorder$t[3]`, bisexual non-binary people, `r genderandsexuality_inorder$t[4]`, bisexual cisgender men, `r genderandsexuality_inorder$t[5]`, and bisexual transgender non-binary people, `r genderandsexuality_inorder$t[6]`. 
 
 ## Experiences with Misgendering
 ```{r misgendering_descriptives, echo=FALSE}
