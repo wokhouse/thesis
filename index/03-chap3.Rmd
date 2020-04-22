@@ -1,4 +1,4 @@
-# Results {#results}
+# Results
 
 ```{r results_init, include=FALSE}
 library(thesisdown)
