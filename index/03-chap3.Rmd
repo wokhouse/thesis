@@ -51,6 +51,24 @@ mod_data %>%
   )
 ```
 
+### Sexuality
+Participants were asked to report their sexuality in a write-in field. Responses were qualitatively coded by the author. 
+```{r, echo = FALSE}
+sexuality_labels <- data.frame(label = c("Bisexual", "Straight", "Pansexual", "Queer", "Questioning", "Gay", "Lesbian", "Asexual", "Aspec"))
+mod_data %>%
+  select(starts_with("sexuality.")) %>%
+  filter_at(vars(everything()), all_vars(!is.na(.))) %>%
+  mutate_all(as.logical) %>%
+  summarise_all(sum) %>%
+  select(-c(sexuality.demisexual, sexuality.polyamorous, sexuality.enbian)) %>%
+  pivot_longer(everything(), names_to = "sexuality", values_to = "n") %>%
+  cbind(sexuality_labels) %>%
+  select(label, n) %>%
+  kable(
+    col.names = c("Sexuality", "N")
+  )
+```
+
 ## Experiences with Misgendering
 ```{r misgendering_descriptives, echo=FALSE}
 misgendering_desc <- mod_data %>%
