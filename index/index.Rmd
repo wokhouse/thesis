@@ -9,6 +9,7 @@ degree: 'Bachelor of Arts'
 title: 'Pronouns Good or Bad: Attitudes and Relationships with Gendered Pronouns in Gender-Diverse Undergraduates'
 site: bookdown::bookdown_site
 output: 
+#  thesisdown::thesis_pdf: default
   thesisdown::thesis_gitbook: default
 # Specify the location of the bibliography below
 bibliography: references.bib
