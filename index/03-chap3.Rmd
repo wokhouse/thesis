@@ -1,3 +1,7 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
 # Results
 
 ```{r results_init, include=FALSE}
@@ -11,36 +15,50 @@ source(here("index", "analysis", "qualtrics.R"))
 ```
 
 ## Demographics
-
 ### Gender
-
 I collected gender-related demographic data by asking participants to write in their gender identity and answer a series of yes/no questions: "Are you cisgender?," "Are you transgender?," and "Is your gender non-binary?" Answering yes on one question did not force the participants to answer no on others—this treated gender identity as a collection of separate, related labels that participants may or may not identify with simultaneously. Responses for the write-in question were qualitatively coded by me. 
 
 ```{r gender_descriptives, echo=FALSE}
-qual_nonbinary_n <- mod_data %>% filter(`non-binary` == TRUE) %>% nrow()
+qual_nonbinary_n <- mod_data %>% filter(`gender.non-binary` == TRUE) %>% nrow()
 ```
 Overall, `r mod_data %>% filter(cis == TRUE) %>% nrow()` participants identified as cisgender, `r mod_data %>% filter(trans == TRUE) %>% nrow()` identified as transgender, and `r mod_data %>% filter(nonbinary == TRUE) %>% nrow()` identified their gender as non-binary. It is important to note that there is overlap among these groups. `r mod_data %>% filter(trans == TRUE, nonbinary == TRUE) %>% nrow()` participants said they were transgender and non-binary, `r mod_data %>% filter(cis == TRUE, nonbinary == TRUE) %>% nrow()` participants said they were cisgender and non-binary, and 1 participant said they were cisgender, transgender, and non-binary. 
 
-The most common gender themes were woman (*N* = `r mod_data %>% filter(woman == TRUE) %>% nrow()`), man (*N* = `r mod_data %>% filter(man == TRUE) %>% nrow()`), non-binary (*N* = `r qual_nonbinary_n`), cisgender (*N* = `r mod_data %>% filter(cisgender == TRUE) %>% nrow()`), transgender (*N* = `r mod_data %>% filter(transgender == TRUE) %>% nrow()`), questioning (*N* = `r mod_data %>% filter(questioning_gender == TRUE) %>% nrow()`), masculine (*N* = `r mod_data %>% filter(masculine == TRUE) %>% nrow()`), agender (*N* = `r mod_data %>% filter(agender == TRUE) %>% nrow()`), genderfluid (*N* = `r mod_data %>% filter(genderfluid == TRUE) %>% nrow()`), and queer (*N* = `r mod_data %>% filter(queer_gender == TRUE) %>% nrow()`). 
+Qualitative themes were decided by the author after examining the data and consulting with a number of gender-diverse peers. The most commonly occuring themes were woman (*N* = `r mod_data %>% filter(gender.woman == TRUE) %>% nrow()`), man (*N* = `r mod_data %>% filter(gender.man == TRUE) %>% nrow()`), non-binary (*N* = `r qual_nonbinary_n`), cisgender (*N* = `r mod_data %>% filter(gender.cisgender == TRUE) %>% nrow()`), transgender (*N* = `r mod_data %>% filter(gender.transgender == TRUE) %>% nrow()`), questioning (*N* = `r mod_data %>% filter(gender.questioning_gender == TRUE) %>% nrow()`), masculine (*N* = `r mod_data %>% filter(gender.masculine == TRUE) %>% nrow()`), agender (*N* = `r mod_data %>% filter(gender.agender == TRUE) %>% nrow()`), genderfluid (*N* = `r mod_data %>% filter(gender.genderfluid == TRUE) %>% nrow()`), and queer (*N* = `r mod_data %>% filter(gender.queer_gender == TRUE) %>% nrow()`). 
+
+### Pronouns
+Participants were asked their pronouns in a write-in box. Pronouns were qualitatively coded by the author. No participants reported using any other pronouns besides he/him, she/her, and they/them. However, many participants reported using multiple pronouns. 
+```{r, echo = FALSE}
+mod_data %>%
+  group_by(pronoun.he, pronoun.she, pronoun.they, pronoun.all) %>%
+  tally() %>%
+  mutate(pronoun = case_when(
+    pronoun.he == TRUE & pronoun.she == FALSE & pronoun.they == FALSE & pronoun.all == FALSE ~ "he/him",
+    pronoun.he == FALSE & pronoun.she == TRUE & pronoun.they == FALSE & pronoun.all == FALSE ~ "she/her",
+    pronoun.he == FALSE & pronoun.she == FALSE & pronoun.they == TRUE & pronoun.all == FALSE ~ "they/them",
+    pronoun.he == TRUE & pronoun.she == FALSE & pronoun.they == TRUE & pronoun.all == FALSE ~ "he/him & they/them",
+    pronoun.he == FALSE & pronoun.she == TRUE & pronoun.they == TRUE & pronoun.all == FALSE ~ "she/her & they/them",
+    pronoun.he == TRUE & pronoun.she == TRUE & pronoun.they == FALSE & pronoun.all == FALSE ~ "he/him & she/her",
+    pronoun.all == TRUE ~ "all pronouns"
+  )) %>%
+  ungroup() %>%
+  filter(!is.na(pronoun)) %>%
+  select(pronoun, n) %>%
+  group_by(pronoun) %>%
+  arrange(n * -1) %>%
+  kable(
+    col.names = c("Pronouns", "N"),
+    caption = "Participant pronouns"
+  )
+```
 
 ## Experiences with Misgendering
 ```{r misgendering_descriptives, echo=FALSE}
-cis_descriptives <- mod_data %>%
-  filter(!is.na(misgendering_freq), !is.na(misgendering_stigma), cis == 1) %>%
-  summarise(
-    mean_freq = round(mean(misgendering_freq), digits = 2), 
-    sd_freq = round(sd(misgendering_freq), digits = 2), 
-    mean_stigma = round(mean(misgendering_stigma), digits = 2), 
-    sd_stigma = round(sd(misgendering_stigma), digits = 2), 
-    n = n())
-noncis_descriptives <- mod_data %>%
-  filter(!is.na(misgendering_freq), !is.na(misgendering_stigma), cis == 0) %>%
-  summarise(
-    mean_freq = round(mean(misgendering_freq), digits = 2), 
-    sd_freq = round(sd(misgendering_freq), digits = 2), 
-    mean_stigma = round(mean(misgendering_stigma), digits = 2), 
-    sd_stigma = round(sd(misgendering_stigma), digits = 2), 
-    n = n())
+misgendering_desc <- mod_data %>%
+  filter(!is.na(misgendering_freq), !is.na(misgendering_stigma)) %>%
+  group_by(cis) %>%
+  select(misgendering_freq, misgendering_stigma) %>%
+  summarise_all(funs(mean, sd)) %>%
+  mutate_if(is.numeric, round, digits = 2)
 ```
 ```{r misgendering_freq, echo=FALSE}
 # misgendering freq in cisgender people
@@ -61,7 +79,8 @@ misgendering_freq_noncis <- mod_data %>%
   select(misgendering_freq, noncis_freq)
 # comparing cis and non-cis people misgendering frequency
 misgendering_freq_cisvsnoncis <- mod_data %>%
-  t_test(misgendering_freq ~ cis, order = c(FALSE, TRUE))
+  t_test(misgendering_freq ~ cis, order = c(FALSE, TRUE)) %>%
+  mutate_if(is.numeric, round, digits = 2)
 ```
 ```{r misgendering_stigma, echo=FALSE}
 # misgendering freq in cisgender people
@@ -85,8 +104,8 @@ misgendering_stigma_cisvsnoncis <- mod_data %>%
   t_test(misgendering_stigma ~ cis, order = c(FALSE, TRUE))
 ```
 
-Similar to @mclemoreExperiencesMisgenderingIdentity2015, we had participants report how frequently they were misgendered and how stigmatized misgendering made them feel. However, unlike @mclemoreExperiencesMisgenderingIdentity2015, we administered these questions to cisgender people as well. Independent t-tests were used to compare the cisgender and non-cisgender participants. Non-cisgender participants (*M* = `r noncis_descriptives$mean_freq`, *SD* = `r noncis_descriptives$sd_freq`) reported being misgendered more frequently than cisgender participants (*M* = `r cis_descriptives$mean_freq`, *SD* = `r cis_descriptives$sd_freq`), *t*(`r round(misgendering_freq_cisvsnoncis$t_df)`) = `r round(misgendering_freq_cisvsnoncis$statistic, digits = 1)`, *p* < 0.001.
-Non-cisgender participants (*M* = `r noncis_descriptives$mean_stigma`, *SD* = `r noncis_descriptives$sd_stigma`) also reported feeling more stigmatized when misgendered than than cisgender participants (*M* = `r cis_descriptives$mean_stigma`, *SD* = `r cis_descriptives$sd_stigma`), *t*(`r round(misgendering_stigma_cisvsnoncis$t_df)`) = `r round(misgendering_stigma_cisvsnoncis$statistic, digits = 1)`, *p* < 0.001. 
+Similar to @mclemoreExperiencesMisgenderingIdentity2015, we had participants report how frequently they were misgendered and how stigmatized misgendering made them feel. However, unlike @mclemoreExperiencesMisgenderingIdentity2015, we administered these questions to cisgender people as well. Independent t-tests were used to compare the cisgender and non-cisgender participants. Non-cisgender participants (*M* = `r misgendering_desc$misgendering_freq_mean[1]`, *SD* = `r misgendering_desc$misgendering_freq_sd[1]`) reported being misgendered more frequently than cisgender participants (*M* = `r misgendering_desc$misgendering_freq_mean[2]`, *SD* = `r misgendering_desc$misgendering_freq_mean[2]`), *t*(`r misgendering_freq_cisvsnoncis$t_df`) = `r round(misgendering_freq_cisvsnoncis$statistic, digits = 1)`, *p* < 0.001.
+Non-cisgender participants (*M* = `r misgendering_desc$misgendering_stigma_mean[1]`, *SD* = `r misgendering_desc$misgendering_stigma_sd[1]`) also reported feeling more stigmatized when misgendered than than cisgender participants (*M* = `r misgendering_desc$misgendering_stigma_mean[2]`, *SD* = `r misgendering_desc$misgendering_stigma_mean[2]`), *t*(`r misgendering_stigma_cisvsnoncis$t_df`) = `r round(misgendering_stigma_cisvsnoncis$statistic, digits = 1)`, *p* < 0.001. 
 
 
 <!-- misgendering freq table -->
@@ -139,15 +158,15 @@ Pearson's Chi-squared tests were used to compare the misgendering frequency obse
 There were significant differences when compared to both the study 1 population, *X<sup>2</sup>* (`r study1_chisq$parameter`, *N* = `r sum(study1_chisq$observed, study1_chisq$expected)`) = `r round(study1_chisq$statistic, digits = 2)`, *p* = `r round(study1_chisq$p.value, digits = 2)`, and the study 2 population, *X<sup>2</sup>* (`r study2_chisq$parameter`, *N* = `r sum(study2_chisq$observed, study2_chisq$expected)`) = `r round(study2_chisq$statistic, digits = 2)`, *p* = `r round(study2_chisq$p.value, digits = 2)`.
 
 ```{r misgendering_anova, echo=FALSE}
-misgendering_freq_anova <- aov(misgendering_freq ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman, mod_data) %>%
+misgendering_freq_anova <- aov(misgendering_freq ~ gender_bin, mod_data) %>%
   tidy() %>%
   mutate(p.value = round(p.value, digits = 4))
-misgendering_stigma_anova <- aov(misgendering_stigma ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman, mod_data) %>%
+misgendering_stigma_anova <- aov(misgendering_stigma ~ gender_bin, mod_data) %>%
   tidy() %>%
   mutate(p.value = round(p.value, digits = 4))
 ```
 @mclemoreExperiencesMisgenderingIdentity2015 performed a one-way ANOVA "to compare differences among three gender groups (transgender men, transgender women, and genderqueer)" in misgendering frequency and felt stigma when misgendered.
-Because I took a different approach to collecting gender-related demographic data, I elected to perform a factorial ANOVA comparing endorsement of several endorsed identities on misgendering frequency and felt stigma. 
+Because a different approach was taken in collecting gender-related demographic data, we performed a factorial ANOVA comparing endorsement of several endorsed identities on misgendering frequency and felt stigma. 
 
 There were multiple significant effects of identity endorsement on misgendering frequency. 
 Cisgender, *F*(`r misgendering_freq_anova$df[1]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[1], digits = 2)`, *p* < 0.001,
@@ -170,9 +189,7 @@ Neither non-binary men (*p* = `r round(misgendering_stigma_anova$p.value[8], dig
 ```{r misgendering_pronoun_anova, echo = FALSE}
 # run factorial anova on pronouns
 misgendering_pronoun_anova_raw <- mod_data %>%
-  select(misgendering_freq, cis, he, she, they) %>%
-  mutate(cis = factor(cis), he = factor(he), she = factor(she), they = factor(they)) %>%
-  aov(misgendering_freq ~ he + they + cis:he + cis:they, .)
+  aov(misgendering_freq ~ pronoun.he + pronoun.they + cis:pronoun.he + cis:pronoun.they, .)
 # tidy anova data
 misgendering_pronoun_anova <- misgendering_pronoun_anova_raw %>% tidy()
 # run and tidy tukey test
@@ -181,7 +198,7 @@ misgendering_pronoun_tukey <- misgendering_pronoun_anova_raw %>%
   tidy()
 ```
 
-Unlike @mclemoreExperiencesMisgenderingIdentity2015, I also collected participants pronouns. This allowed me to perform a factorial ANOVA with a follow-up Tukey test to examine pronouns, independent of gender, had an effect on misgendering frequency. I will finish this paragraph later lol once i figure out if it's actually relevant or not lol.
+Unlike @mclemoreExperiencesMisgenderingIdentity2015, participant pronouns were also collected. This allowed us to perform a factorial ANOVA with a follow-up Tukey test to examine pronouns, independent of gender, had an effect on misgendering frequency. I will finish this paragraph later lol once i figure out if it's actually relevant or not lol.
 
 
 ## Gender Congruence
@@ -190,7 +207,7 @@ Unlike @mclemoreExperiencesMisgenderingIdentity2015, I also collected participan
 ```{r congruence_results, echo = FALSE}
 cong_desc <- mod_data %>%
   filter(!is.na(congruence)) %>%
-  group_by(cisgender) %>%
+  group_by(cis) %>%
   summarise(mean_cong = mean(congruence), sd_cong = sd(congruence)) %>%
   mutate_if(is.numeric, round, digits = 2)
 cong_ttest <- mod_data %>%
@@ -199,7 +216,7 @@ cong_ttest <- mod_data %>%
   mutate_if(is.numeric, round, digits = 2)
 # congruence anova
 cong_anova <- mod_data %>%
-  aov(congruence ~ cis + trans + nonbinary + man + woman + man:trans + woman:trans + nonbinary:man + nonbinary:woman + ethnicity + year + major + age + sexuality, .) %>%
+  aov(congruence ~ gender_bin, .) %>%
   tidy() %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
@@ -213,7 +230,7 @@ There were also no significant effects in men (*p* = `r cong_anova$p.value[4]`),
 
 ```{r congruence_graph, echo = FALSE, warning=FALSE}
 cisman_cong <- mod_data %>%
-  filter(!is.na(congruence), cis == TRUE & nonbinary == FALSE & trans == FALSE & man == TRUE & woman == FALSE) %>%
+  filter(!is.na(congruence), cis == TRUE & nonbinary == FALSE & trans == FALSE & gender.man == TRUE & gender.woman == FALSE) %>%
   summarise(median = median(congruence))
 mod_data %>%
   filter(gender_bin != "other", !is.na(congruence)) %>%
@@ -266,7 +283,7 @@ A Tukey post-hoc comparison revealed that cisgender men `r inclusive_tukey_text$
 
 ```{r incl_behavior_graph, echo = FALSE, warning=FALSE}
 cisman_inc <- mod_data %>%
-  filter(!is.na(inclusive_behavior), cis == TRUE & nonbinary == FALSE & trans == FALSE & man == TRUE & woman == FALSE) %>%
+  filter(!is.na(inclusive_behavior), cis == TRUE & nonbinary == FALSE & trans == FALSE & gender.man == TRUE & gender.woman == FALSE) %>%
   summarise(median = median(inclusive_behavior))
 # comparisons <- list(c("Cis Man", "Cis Woman"), c("Trans Man", "Trans Woman"), c("Non-binary", "Trans Non-binary"))
 mod_data %>%
