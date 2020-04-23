@@ -42,24 +42,12 @@ mod_data %>%
 ```
 
 ### Pronouns
-Participants were asked their pronouns in a write-in box. Pronouns were qualitatively coded by the author. No participants reported using any other pronouns besides he/him, she/her, and they/them. However, many participants reported using multiple pronouns. 
+Participants were asked their pronouns in a write-in box. Pronouns were qualitatively coded by the author. No participants reported using any other pronouns besides he/him, she/her, and they/them. However, many participants reported using multiple pronouns. It should be noted that individuals that use multiple pronouns may prefer one over the other, or use different pronouns in specific situations. This is not reflected in these data. 
 ```{r, echo = FALSE}
 mod_data %>%
-  group_by(pronoun.he, pronoun.she, pronoun.they, pronoun.all) %>%
+  filter(!is.na(pronoun_bin)) %>%
+  group_by(pronoun_bin) %>%
   tally() %>%
-  mutate(pronoun = case_when(
-    pronoun.he == TRUE & pronoun.she == FALSE & pronoun.they == FALSE & pronoun.all == FALSE ~ "he/him",
-    pronoun.he == FALSE & pronoun.she == TRUE & pronoun.they == FALSE & pronoun.all == FALSE ~ "she/her",
-    pronoun.he == FALSE & pronoun.she == FALSE & pronoun.they == TRUE & pronoun.all == FALSE ~ "they/them",
-    pronoun.he == TRUE & pronoun.she == FALSE & pronoun.they == TRUE & pronoun.all == FALSE ~ "he/him & they/them",
-    pronoun.he == FALSE & pronoun.she == TRUE & pronoun.they == TRUE & pronoun.all == FALSE ~ "she/her & they/them",
-    pronoun.he == TRUE & pronoun.she == TRUE & pronoun.they == FALSE & pronoun.all == FALSE ~ "he/him & she/her",
-    pronoun.all == TRUE ~ "all pronouns"
-  )) %>%
-  ungroup() %>%
-  filter(!is.na(pronoun)) %>%
-  select(pronoun, n) %>%
-  group_by(pronoun) %>%
   arrange(n * -1) %>%
   kable(
     col.names = c("Pronouns", "N"),
@@ -67,8 +55,23 @@ mod_data %>%
   )
 ```
 
+```{r genderandpronouns_inorder, echo = FALSE}
+genderandpronouns_inorder <- mod_data %>%
+  filter(!is.na(gender_bin)) %>%
+  group_by(gender_bin, pronoun_bin) %>%
+  tally(sort = TRUE) %>%
+  mutate(t = paste("(*N* = ", n, ")", sep = ""))
+```
+The most common gender and pronoun combinations were cisgender women that used she/her, `r genderandpronouns_inorder$t[1]`, cisgender men that used he/him, `r genderandpronouns_inorder$t[2]`, transgender non-binary people that used they/them, `r genderandpronouns_inorder$t[3]`, non-binary people that used they/them, `r genderandpronouns_inorder$t[4]`, non-binary people that used she/her and they/them, `r genderandpronouns_inorder$t[5]`, trans men that used he/him, `r genderandpronouns_inorder$t[6]`, and trans women that used she/her, `r genderandpronouns_inorder$t[7]`. 
+
 ### Sexuality
-Participants were asked to report their sexuality in a write-in field. Responses were qualitatively coded by the author. Responses were coded with as many themes as 
+```{r bipan_overlap, echo = FALSE}
+bipan_overlap <- mod_data %>% filter(sexuality.bisexual == TRUE | sexuality.pansexual == TRUE) %>% 
+  group_by(sexuality.bisexual, sexuality.pansexual) %>% 
+  tally() %>%
+  mutate(t = paste("(*N* = ", n, ")", sep = ""))
+```
+Participants were asked to report their sexuality in a write-in field. Responses were qualitatively coded by the author. Many responses were coded with multiple themes, so the total *N* exceeds the sample size. One exceptionally common response was "bisexual/pansexual," `r bipan_overlap$t[3]`, which was coded with both themes.
 ```{r, echo = FALSE}
 sexuality_labels <- data.frame(label = c("Bisexual", "Straight", "Pansexual", "Queer", "Questioning", "Gay", "Lesbian", "Asexual", "Aspec"))
 mod_data %>%
@@ -82,7 +85,6 @@ mod_data %>%
     col.names = c("Sexuality", "N")
   )
 ```
-
 ```{r genderandsexuality_inorder, echo = FALSE}
 genderandsexuality_inorder <- mod_data %>%
   filter(!is.na(gender_bin)) %>%
@@ -101,7 +103,7 @@ The most common gender and sexualities were bisexual cisgender women, `r gendera
 misgendering_desc <- mod_data %>%
   filter(!is.na(misgendering_freq), !is.na(misgendering_stigma)) %>%
   group_by(cis) %>%
-  select(misgendering_freq, misgendering_stigma) %>%
+  select(cis, misgendering_freq, misgendering_stigma) %>%
   summarise_all(funs(mean, sd)) %>%
   mutate_if(is.numeric, round, digits = 2)
 ```
