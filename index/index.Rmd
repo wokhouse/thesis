@@ -16,17 +16,7 @@ output:
 #  thesisdown::thesis_epub: default
 # If you are creating a PDF you'll need to write your preliminary content (e.g., abstract, acknowledgements) here or
 # use code similar to line 22-23 for the .RMD files. If you are NOT producing a PDF, you can delete or silence lines 21-32 in this YAML header.
-# abstract: |
-#   `r if(knitr:::is_latex_output()) paste(readLines("00-abstract.Rmd"), collapse = '\n  ')`
-# # If you'd rather include the preliminary content in files instead of inline
-# # like below, use a command like that for the abstract above.  Note that a tab is 
-# # needed on the line after the `|`.
-# acknowledgements: |
-#   `r if(knitr:::is_latex_output()) paste(readLines("00-abstract.Rmd"), collapse = '\n  ')`
-# dedication: |
-#   `r if(knitr:::is_latex_output()) paste(readLines("00-abstract.Rmd"), collapse = '\n  ')`
-# preface: |
-#   `r if(knitr:::is_latex_output()) paste(readLines("00-abstract.Rmd"), collapse = '\n  ')`
+
 # Specify the location of the bibliography below
 bibliography: references.bib
 # Download your specific csl file and refer to it in the line below.
