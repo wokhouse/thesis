@@ -230,7 +230,7 @@ bin_genders <- function(data) {
       # cis == FALSE & nonbinary == TRUE & trans == FALSE & gender.man == FALSE & gender.woman == TRUE ~ "Non-binary Woman",
       # cis == FALSE & nonbinary == FALSE & trans == FALSE & gender.man == FALSE & gender.woman == TRUE ~ "Non-binary Woman",
       TRUE ~ "other"
-    ), levels = c("Cis", "Cis Man","Cis Woman","Trans Man","Trans Woman", "Cis Non-binary", "Non-binary","Trans Non-binary", "Non-binary Man", "Non-binary Woman"))) %>%
+    ), levels = c("Cis Man","Cis Woman","Trans Man","Trans Woman", "Cis Non-binary", "Non-binary","Trans Non-binary"))) %>%
     mutate(pronoun_bin = case_when(
       pronoun.he == TRUE & pronoun.she == FALSE & pronoun.they == FALSE & pronoun.all == FALSE ~ "he/him",
       pronoun.he == FALSE & pronoun.she == TRUE & pronoun.they == FALSE & pronoun.all == FALSE ~ "she/her",

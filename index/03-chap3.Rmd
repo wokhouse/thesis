@@ -1,16 +1,21 @@
 ---
-editor_options: 
+editor_options:
   chunk_output_type: console
+output: pdf_document
 ---
 # Results
 
 ```{r results_init, include=FALSE}
 library(thesisdown)
+library(kableExtra)
+library(formattable)
 library(tidyverse)
 library(infer)
 library(broom)
 library(here)
 library(ggpubr)
+library(factoextra)
+library(FactoMineR)
 source(here("index", "analysis", "qualtrics.R"))
 ```
 
@@ -348,7 +353,6 @@ mod_data %>%
 
 ### Comfort sharing pronouns
 <!-- includes items 1, 2, 3, 7, 8, 9 -->
-
 ### Desire to share pronouns
 <!-- includes items 4, 5, 6 -->
 
@@ -360,3 +364,100 @@ mod_data %>%
 
 ### Historical experience at Reed College
 <!-- includes items 19, 20, 21 -->
+
+
+### Primary Component Analysis
+```{r pca, echo = FALSE}
+pca_in <- mod_data %>%
+  select(
+    cis,
+    trans,
+    nonbinary,
+    gender_bin,
+    pronoun_bin,
+    comfort_general,
+    comfort_reed,
+    comfort_class,
+    desire_general,
+    desire_reed,
+    desire_class,
+    comfort_withsimilargenders,
+    comfort_someoneelsefirst,
+    comfort_proffirst,
+    attention_general,
+    attention_reed,
+    attention_class,
+    gender_perception_consistent,
+    gender_pronouns_consistent,
+    pronouns_represent,
+    willmisgender_ifnopronouns,
+    assume_pronouns_correctly,
+    understand_better,
+    profs_share,
+    students_share,
+    reed_support,
+    misgendering_freq,
+    misgendering_stigma
+    ) %>%
+  mutate(gender_bin = as.numeric(gender_bin), nonbinary = as.numeric(nonbinary), trans = as.numeric(trans), cis = as.numeric(cis)) %>%
+  mutate(pronoun_bin = recode(pronoun_bin, "she/her" = 1, "he/him" = 2, "they/them" = 3, "she/her & they/them" = 5, "he/him & they/them" = 6, "all pronouns" = 7, "he/him & she/her" = 7)) %>%
+  filter(complete.cases(.))
+# perform PCA
+pca_out <- pca_in %>%
+  prcomp(scale = FALSE)
+# get factor loadings
+loadings <- pca_out %>%
+  tidy("rotation") %>%
+  pivot_wider(names_from = PC, values_from = value) %>%
+  select(column, `1`, `2`, `3`) %>% 
+  mutate_if(is.numeric, round, digits = 2)
+variance <- pca_out %>%
+  tidy("pcs")
+eigenvals <- get_eigenvalue(pca_out) %>% mutate_if(is.numeric, round, digits = 1)
+```
+Principal component analysis (PCA) was used on the pronoun and misgendering data. Using a Screen plot, we retained three components with an eigenvalue of `r eigenvals$eigenvalue[3]`, accounting for `r eigenvals$cumulative.variance.percent[3]`% of the variance. 
+```{r, echo = FALSE}
+# color tile function that can take more than one color, since we want very positive and very negative values to be highlighted, but not
+# intermediate values
+color_tile2 <- function (...) {
+  formatter("span", style = function(x) {
+    style(display = "block",
+          padding = "0 4px", 
+          `border-radius` = "4px", 
+          `background-color` = csscolor(matrix(as.integer(colorRamp(...)(normalize(as.numeric(x)))), 
+                                               byrow=TRUE, dimnames=list(c("red","green","blue"), NULL), nrow=3)))
+  })}
+loadings %>%
+  mutate(
+    `1` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`1`),
+    `2` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`2`),
+    `3` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`3`)
+  ) %>%
+  kable(
+    "html",
+    escape = FALSE,
+    col.names = c("Item", "Comp. 1 Loading", "Comp. 2 Loading", "Comp. 3 Loading")
+  )
+```
+Visualization of the first two components (account for 47.6% of the variation) yielded interesting results. The x-axis represents the first component. Loadings indicate that this component represents one's feelings of consistency between gender, appearance and pronouns. Negative values along the x-axis likely indicate that one is misgendered less frequently and other people usually correctly assume one's pronouns. Positive values along the x-axis likely indicate that one is misgendered more frequently and other people usually do not correctly assume one's pronouns. 
+
+The y-axis represents the second component. Loadings indicate that this component represents one's desire to share one's pronouns and, to a smaller extent, concern that doing so will draw attention to oneself. Positive values along the y-axes indicate that one has *blah blah blah i need to do more exploratory analysis before this exploratory analysis*
+```{r pca_vis, echo = FALSE}
+pca_out %>%
+  fviz_pca_ind(geom.ind = "point", pointshape = 21, 
+               pointsize = 2, 
+               fill = factor(
+                 pca_in$gender_bin,
+                 labels = c("Cis Man","Cis Woman","Trans Man","Trans Woman", "Cis Non-binary", "Non-binary","Trans Non-binary")
+               ),
+               palette="jol",
+               col.ind = "black", 
+               addEllipses = TRUE,
+               label = "var",
+               col.var = "black",
+               repel = TRUE,
+               legend.title = "Gender")
+```
+Cisgender men and cisgender women appear very separate from the non-cisgender participants. In this plot, cis men are surrounded surrounded by a red circle to the left of the y-axis. Cis women are surrounded by an orange circle to the left of the y-axis. There is significant overlap between cis men and cis women. 
+
+Notably, there is no overlap between cisgender men and transgender women (surrounded by a blue-green circle) along the x-axis, indicating that cisgender men and transgender women have very different experiences with the relationship between their gender and appearance, as well as how frequently they are misgendered. 
