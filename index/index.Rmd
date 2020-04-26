@@ -66,4 +66,4 @@ on chapters.
 
 # Introduction {.unnumbered}
 
-My introduction bit will go here :-)
+Hello and welcome to my thesis. This will very much be an active document until at least May 1st, when it will be due. Join me as I write about pronouns :-)
