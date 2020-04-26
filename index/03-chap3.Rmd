@@ -14,8 +14,9 @@ library(infer)
 library(broom)
 library(here)
 library(ggpubr)
+library(ggsci)
 library(factoextra)
-library(FactoMineR)
+library(diptest)
 source(here("index", "analysis", "qualtrics.R"))
 ```
 
@@ -30,7 +31,7 @@ Overall, `r mod_data %>% filter(cis == TRUE) %>% nrow()` participants identified
 
 Qualitative themes were decided by the author after examining the data and consulting with a number of gender-diverse peers. The most commonly occuring themes were woman (*N* = `r mod_data %>% filter(gender.woman == TRUE) %>% nrow()`), man (*N* = `r mod_data %>% filter(gender.man == TRUE) %>% nrow()`), non-binary (*N* = `r qual_nonbinary_n`), cisgender (*N* = `r mod_data %>% filter(gender.cisgender == TRUE) %>% nrow()`), transgender (*N* = `r mod_data %>% filter(gender.transgender == TRUE) %>% nrow()`), questioning (*N* = `r mod_data %>% filter(gender.questioning_gender == TRUE) %>% nrow()`), masculine (*N* = `r mod_data %>% filter(gender.masculine == TRUE) %>% nrow()`), agender (*N* = `r mod_data %>% filter(gender.agender == TRUE) %>% nrow()`), genderfluid (*N* = `r mod_data %>% filter(gender.genderfluid == TRUE) %>% nrow()`), and queer (*N* = `r mod_data %>% filter(gender.queer_gender == TRUE) %>% nrow()`). 
 
-For the purposes of analysis, seven *artificial* gender groups were created: cisgender man, cisgender woman, transgender man, transgender woman, cisgender non-binary person, non-binary person, and transgender non-binary person. It is important to note that these bins are artificial and are not representative of each individual's own gender and experience. 
+For the purposes of analysis, seven *artificial* gender groups were created: cisgender man, cisgender woman, transgender man, transgender woman, cisgender non-binary person, non-binary person, and transgender non-binary person. It is important to note that these bins are artificial and are not representative of each individual's own gender and experience. For example, "non-binary" can have many meanings and is best understood as an umbrella term that encompasses many genders, including individuals who's gender is just "non-binary."
 
 The cisgender man and cisgender woman groups include all participants that only indicated that they were cisgender and indicated that they were a man or woman in the write-in gender field. The transgender man and transgender woman groups were the same as the cisgender groups, but included participants who indicated that they were transgender. 
 
@@ -353,6 +354,41 @@ mod_data %>%
 
 ### Comfort sharing pronouns
 <!-- includes items 1, 2, 3, 7, 8, 9 -->
+```{r comfort_sharing, echo = FALSE}
+comfort_data <- mod_data %>%
+  select(
+    gender_bin,
+    pronoun_bin,
+    starts_with("comfort_")
+  ) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
+comfort_anova_raw <- comfort_data %>%
+  aov(val ~ factor + pronoun_bin + gender_bin + factor:gender_bin + factor:pronoun_bin, .)
+comfort_anova <- comfort_anova_raw %>% tidy()
+comfort_tukey <- comfort_anova_raw %>%
+  TukeyHSD() %>%
+  tidy() %>%
+  filter(adj.p.value < 0.05)
+comfort_desc_factor <- comfort_data %>%
+  group_by(factor) %>%
+  summarise(mean = mean(val), sd = sd(val))
+comfort_desc_pronoun <- comfort_data %>%
+  group_by(pronoun_bin) %>%
+  summarise(mean = mean(val), sd = sd(val))
+comfort_desc_gender <- comfort_data %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(val), sd = sd(val))
+comfort_desc_factorgender <- comfort_data %>%
+  group_by(factor, gender_bin) %>%
+  summarise(mean = mean(val), sd = sd(val))
+comfort_desc_factorpronoun <- comfort_data %>%
+  group_by(factor, pronoun_bin) %>%
+  summarise(mean = mean(val), sd = sd(val))
+```
+Items 1, 2, 3, 7, 8, and 9 touched on participant's comfort sharing their pronouns.
+A factorial ANOVA found x effect of setting and x effect of a third-party's presence or initiation on sharing pronouns. 
+
 ### Desire to share pronouns
 <!-- includes items 4, 5, 6 -->
 
@@ -368,11 +404,13 @@ mod_data %>%
 
 ### Primary Component Analysis
 ```{r pca, echo = FALSE}
-pca_in <- mod_data %>%
+pca_all <- mod_data %>%
   select(
     cis,
     trans,
     nonbinary,
+    gender.man,
+    gender.woman,
     gender_bin,
     pronoun_bin,
     comfort_general,
@@ -399,9 +437,12 @@ pca_in <- mod_data %>%
     misgendering_freq,
     misgendering_stigma
     ) %>%
-  mutate(gender_bin = as.numeric(gender_bin), nonbinary = as.numeric(nonbinary), trans = as.numeric(trans), cis = as.numeric(cis)) %>%
-  mutate(pronoun_bin = recode(pronoun_bin, "she/her" = 1, "he/him" = 2, "they/them" = 3, "she/her & they/them" = 5, "he/him & they/them" = 6, "all pronouns" = 7, "he/him & she/her" = 7)) %>%
+  mutate(gender.man = as.numeric(gender.man), gender.woman = as.numeric(gender.woman), nonbinary = as.numeric(nonbinary), trans = as.numeric(trans), cis = as.numeric(cis)) %>%
   filter(complete.cases(.))
+
+pca_in <- pca_all %>% select(-c(pronoun_bin, gender_bin))
+pca_desc <-  pca_all %>% select(c(pronoun_bin, gender_bin))
+
 # perform PCA
 pca_out <- pca_in %>%
   prcomp(scale = FALSE)
@@ -413,7 +454,7 @@ loadings <- pca_out %>%
   mutate_if(is.numeric, round, digits = 2)
 variance <- pca_out %>%
   tidy("pcs")
-eigenvals <- get_eigenvalue(pca_out) %>% mutate_if(is.numeric, round, digits = 1)
+eigenvals <- get_eigenvalue(pca_out) %>% mutate_if(is.numeric, round, digits = 2)
 ```
 Principal component analysis (PCA) was used on the pronoun and misgendering data. Using a Screen plot, we retained three components with an eigenvalue of `r eigenvals$eigenvalue[3]`, accounting for `r eigenvals$cumulative.variance.percent[3]`% of the variance. 
 ```{r, echo = FALSE}
@@ -436,28 +477,174 @@ loadings %>%
   kable(
     "html",
     escape = FALSE,
-    col.names = c("Item", "Comp. 1 Loading", "Comp. 2 Loading", "Comp. 3 Loading")
+    col.names = c("Item", "Comp. 1", "Comp. 2", "Comp. 3")
   )
 ```
-Visualization of the first two components (account for 47.6% of the variation) yielded interesting results. The x-axis represents the first component. Loadings indicate that this component represents one's feelings of consistency between gender, appearance and pronouns. Negative values along the x-axis likely indicate that one is misgendered less frequently and other people usually correctly assume one's pronouns. Positive values along the x-axis likely indicate that one is misgendered more frequently and other people usually do not correctly assume one's pronouns. 
+Inspection of the first component's loadings indicate that concern that consistency between others' perception of one's gender, others' assumptions about gender and pronouns, misgendering, and comfort when with people with similar genders to one's own are making significant contributions to the first component. Because these items are mainly concerned with the assumptions other people place on one's gender and pronouns, this component appears to be the amount that cisnormative assumptions about one's gender and appearance harms individuals. 
 
-The y-axis represents the second component. Loadings indicate that this component represents one's desire to share one's pronouns and, to a smaller extent, concern that doing so will draw attention to oneself. Positive values along the y-axes indicate that one has *blah blah blah i need to do more exploratory analysis before this exploratory analysis*
-```{r pca_vis, echo = FALSE}
-pca_out %>%
-  fviz_pca_ind(geom.ind = "point", pointshape = 21, 
-               pointsize = 2, 
-               fill = factor(
-                 pca_in$gender_bin,
-                 labels = c("Cis Man","Cis Woman","Trans Man","Trans Woman", "Cis Non-binary", "Non-binary","Trans Non-binary")
-               ),
-               palette="jol",
-               col.ind = "black", 
-               addEllipses = TRUE,
-               label = "var",
-               col.var = "black",
-               repel = TRUE,
-               legend.title = "Gender")
+Loadings from the second component encompasses one's desire to share one's pronouns in various settings, as well as how comfortable one feels doing so. Because the largest loading in the second component is one's desire to share pronouns, this seems to indicate one's readiness to share pronouns. 
+
+Loadings from the third component emphasize concern that sharing one's pronouns will draw unwanted attention, as well as when others—not necessarily of the same gender—share their pronouns first and how consistent and representative one's pronouns are with one's gender. This component appears to represent concern around sharing pronouns and fears of judgment or lack of understanding about one's pronouns. 
+
+```{r pca_colors, echo = FALSE}
+colors <- pal_jco("default")(8) %>% tail(7)
+colors[2] = "#925E9FFF"
 ```
-Cisgender men and cisgender women appear very separate from the non-cisgender participants. In this plot, cis men are surrounded surrounded by a red circle to the left of the y-axis. Cis women are surrounded by an orange circle to the left of the y-axis. There is significant overlap between cis men and cis women. 
-
-Notably, there is no overlap between cisgender men and transgender women (surrounded by a blue-green circle) along the x-axis, indicating that cisgender men and transgender women have very different experiences with the relationship between their gender and appearance, as well as how frequently they are misgendered. 
+```{r pca_vis_selection, echo = FALSE}
+fill_data <- pca_all %>%
+  mutate(match = factor(case_when(
+    gender_bin == "Cis Man" ~ "Cis Man",
+    gender_bin == "Cis Woman" ~ "Cis Woman",
+    gender_bin == "Trans Man" ~ "Trans Man",
+    gender_bin == "Trans Woman" ~ "Trans Woman",
+    gender_bin == "Cis Non-binary" ~ "Cis Non-binary",
+    gender_bin == "Non-binary" ~ "Non-binary",
+    gender_bin == "Trans Non-binary" ~ "Trans Non-binary",
+    TRUE ~ "Other"
+  )))
+fill_cis <- pca_all %>%
+  mutate(match = factor(case_when(
+    gender_bin == "Cis Man" ~ "Cis Man",
+    gender_bin == "Cis Woman" ~ "Cis Woman",
+    gender_bin == "Cis Non-binary" ~ "Cis Non-binary",
+    TRUE ~ "Other"
+  )))
+fill_noncis <- pca_all %>%
+  mutate(match = factor(case_when(
+    gender_bin == "Trans Man" ~ "Trans Man",
+    gender_bin == "Trans Woman" ~ "Trans Woman",
+    gender_bin == "Non-binary" ~ "Non-binary",
+    gender_bin == "Trans Non-binary" ~ "Trans Non-binary",
+    TRUE ~ "Other"
+  )))
+fill_menwomen <- pca_all %>%
+  mutate(match = factor(case_when(
+    gender_bin == "Cis Man" ~ "Cis Man",
+    gender_bin == "Cis Woman" ~ "Cis Woman",
+    gender_bin == "Trans Man" ~ "Trans Man",
+    gender_bin == "Trans Woman" ~ "Trans Woman",
+    TRUE ~ "Other"
+  )))
+fill_nonbinary <- pca_all %>%
+  mutate(match = factor(case_when(
+    gender_bin == "Cis Non-binary" ~ "Cis Non-binary",
+    gender_bin == "Non-binary" ~ "Non-binary",
+    gender_bin == "Trans Non-binary" ~ "Trans Non-binary",
+    TRUE ~ "Other"
+  )))
+```
+```{r pca_vis, echo = FALSE, fig.widht = 11, fig.height= 12.5, cache = TRUE}
+pca_component_var <- tidy(pca_out, "pcs") %>% mutate_if(is.numeric, round, digits = 3) %>% mutate(t = paste("(", percent * 100, "%)", sep = ""))
+# graph of components 1 and 2, all genders
+pca_vis_all <- pca_out %>%
+  fviz_pca_ind(
+    title = "",
+    # select.ind = list(name = which(fill_data$match != "Other")),
+    palette = colors,
+    geom.ind = "point",
+    pointshape = 21, 
+    pointsize = 2, 
+    axes = c(1,2),
+    fill = fill_data$match,
+    habillage = fill_data$match,
+    addEllipses = TRUE,
+    label = "var",
+    repel = TRUE,
+    legend.title = "Gender") +
+  xlab(paste("Cisnormativity", pca_component_var$t[1])) +
+  ylab(paste("Readiness to share pronouns", pca_component_var$t[2]))
+pca_vis_cis <- pca_out %>%
+  fviz_pca_ind(
+    title = "",
+    select.ind = list(name = which(fill_cis$match != "Other")),
+    palette = colors[c(1,2,3)],
+    geom.ind = "point",
+    pointshape = 21, 
+    pointsize = 2, 
+    axes = c(1,2),
+    fill = fill_data$match,
+    habillage = fill_data$match,
+    addEllipses = TRUE,
+    label = "var",
+    repel = TRUE,
+    legend.title = "Gender") +
+  theme(legend.position = "none") +
+  xlab(paste("Cisnormativity", pca_component_var$t[1])) +
+  ylab(paste("Readiness to share pronouns", pca_component_var$t[2]))
+pca_vis_noncis <- pca_out %>%
+  fviz_pca_ind(
+    title = "",
+    select.ind = list(name = which(fill_noncis$match != "Other")),
+    palette = colors[c(4,5,6,7)],
+    geom.ind = "point",
+    pointshape = 21, 
+    pointsize = 2, 
+    axes = c(1,2),
+    fill = fill_data$match,
+    habillage = fill_data$match,
+    addEllipses = TRUE,
+    label = "var",
+    repel = TRUE,
+    legend.title = "Gender") +
+  theme(legend.position = "none") +
+  xlab(paste("Cisnormativity", pca_component_var$t[1])) +
+  ylab(paste("Readiness to share pronouns", pca_component_var$t[2]))
+pca_vis_menwomen <- pca_out %>%
+  fviz_pca_ind(
+    title = "",
+    select.ind = list(name = which(fill_menwomen$match != "Other")),
+    palette = colors[c(1, 3, 5, 7)],
+    geom.ind = "point",
+    pointshape = 21, 
+    pointsize = 2, 
+    axes = c(1,2),
+    fill = fill_data$match,
+    habillage = fill_data$match,
+    addEllipses = TRUE,
+    label = "var",
+    repel = TRUE,
+    legend.title = "Gender") +
+  theme(legend.position = "none") +
+  xlab(paste("Cisnormativity", pca_component_var$t[1])) +
+  ylab(paste("Readiness to share pronouns", pca_component_var$t[2]))
+pca_vis_nonbinary <- pca_out %>%
+  fviz_pca_ind(
+    title = "",
+    select.ind = list(name = which(fill_nonbinary$match != "Other")),
+    palette = colors[c(2, 4, 6)],
+    geom.ind = "point",
+    pointshape = 21, 
+    pointsize = 2, 
+    axes = c(1,2),
+    fill = fill_data$match,
+    habillage = fill_data$match,
+    addEllipses = TRUE,
+    label = "var",
+    repel = TRUE,
+    legend.title = "Gender") +
+  theme(legend.position = "none") +
+  xlab(paste("Cisnormativity", pca_component_var$t[1])) +
+  ylab(paste("Readiness to share pronouns", pca_component_var$t[2]))
+ggarrange(pca_vis_all,
+          ggarrange(pca_vis_cis,
+                    pca_vis_noncis,
+                    pca_vis_menwomen,
+                    pca_vis_nonbinary,
+                    labels = c("Cisgender individuals", "Non-cisgender individuals", "Men and women", "Non-binary individuals")
+                    ),
+          nrow = 2,
+          heights = c(1.2, 1.8),
+          labels = "All individuals") %>%
+  annotate_figure(top = text_grob("PCA Components 1 & 2 by Gender", face = "bold", size = 14))
+```
+```{r comp1_bimodal_check, echo = FALSE}
+comp1_bimodal <- tidy(pca_out, "u") %>%
+  filter(PC == 1) %>%
+  select(value) %>%
+  unlist() %>%
+  dip.test() %>%
+  tidy() %>%
+  mutate_if(is.numeric, round, digits = 3) %>%
+  mutate(t = paste("(*D* = ", statistic, ", *p* = ", p.value, ")", sep = ""))
+```
+Visualization of the first and second component indicated possible bimodality along the first component (cisnormativity). Hartigan's dip test confirmed this, `r comp1_bimodal$t[1]`. This indicates that experiences with cisnormativity may be described as bimodal, likely indicating that cisgender and non-cisgender people have significantly different experiences navigating the world as their gender. 
