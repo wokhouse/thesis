@@ -647,4 +647,119 @@ comp1_bimodal <- tidy(pca_out, "u") %>%
   mutate_if(is.numeric, round, digits = 3) %>%
   mutate(t = paste("(*D* = ", statistic, ", *p* = ", p.value, ")", sep = ""))
 ```
-Visualization of the first and second component indicated possible bimodality along the first component (cisnormativity). Hartigan's dip test confirmed this, `r comp1_bimodal$t[1]`. This indicates that experiences with cisnormativity may be described as bimodal, likely indicating that cisgender and non-cisgender people have significantly different experiences navigating the world as their gender. 
+Visualization of the first and second component indicated possible bimodality along the first component. Hartigan's dip test confirmed this, `r comp1_bimodal$t[1]`. This indicates that experiences with cisnormativity may be described as bimodal, likely indicating that cisgender and non-cisgender people have significantly different experiences navigating the world as their gender. 
+
+```{r comp1_anova, echo = FALSE}
+pca_comp1_out <- tidy(pca_out, "u") %>%
+  filter(PC == 1) %>%
+  cbind(pca_all)
+comp1_anova_raw <- pca_comp1_out %>%
+  aov(value ~ gender_bin, .)
+comp1_anova <- tidy(comp1_anova_raw) %>%
+  mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", *p* < 0.001",sep = ""))
+comp1_tukey <- comp1_anova_raw %>%
+  TukeyHSD() %>%
+  tidy() %>%
+  filter(adj.p.value < 0.05) %>%
+  mutate_if(is.numeric, round, digits = 3)
+comp1_desc <- pca_comp1_out %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(value), sd = sd(value)) %>%
+  mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
+```
+A one-way ANOVA demonstrated a significant effect of gender on the first component, `r comp1_anova$t[1]`. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, and women, `r comp1_desc$t[2]`, are significantly less affected by cisnormativity than trans men, `r comp1_desc$t[3]`, trans women, `r comp1_desc$t[4]`, cisgender non-binary people, `r comp1_desc$t[5]`, non-binary people, `r comp1_desc$t[6]`, and transgender non-binary people, `r comp1_desc$t[7]`. Cisgender non-binary people are also less affected than trans men, trans women, non-binary people, and transgender non-binary people. Trans non-binary people are also more affected than non-binary people.  
+
+```{r comp2_anova, echo = FALSE}
+pca_comp2_out <- tidy(pca_out, "u") %>%
+  filter(PC == 2) %>%
+  cbind(pca_all)
+comp2_anova_raw <- pca_comp2_out %>%
+  aov(value ~ gender_bin, .)
+comp2_anova <- tidy(comp2_anova_raw) %>%
+  mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", *p* < 0.001",sep = ""))
+comp2_tukey <- comp2_anova_raw %>%
+  TukeyHSD() %>%
+  tidy() %>%
+  filter(adj.p.value < 0.05) %>%
+  mutate_if(is.numeric, round, digits = 3)
+comp2_desc <- pca_comp2_out %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(value), sd = sd(value)) %>%
+  mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
+```
+Another one-way ANOVA demonstrated a significant effect of gender on the second component, `r comp2_anova$t[1]`. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, are less willing to share their pronouns than cisgender women, `r comp1_desc$t[2]` trans men, `r comp1_desc$t[3]`, and non-binary people, `r comp1_desc$t[6]`. Non-binary people are also more willing to share their pronouns than transgender women, `r comp1_desc$t[4]`. 
+
+```{r comp3_anova, echo = FALSE}
+pca_comp3_out <- tidy(pca_out, "u") %>%
+  filter(PC == 3) %>%
+  cbind(pca_all)
+comp3_anova_raw <- pca_comp3_out %>%
+  aov(value ~ gender_bin, .)
+comp3_anova <- tidy(comp3_anova_raw) %>%
+  mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", *p* < 0.001",sep = ""))
+comp3_tukey <- comp3_anova_raw %>%
+  TukeyHSD() %>%
+  tidy() %>%
+  filter(adj.p.value < 0.05) %>%
+  mutate_if(is.numeric, round, digits = 3)
+comp3_desc <- pca_comp3_out %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(value), sd = sd(value)) %>%
+  mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
+```
+**Am I interpreting this right?** A final one-way ANOVA demonstrated a significant effect of gender on the third component, `r comp3_anova$t[1]`. Non-binary people, `r comp1_desc$t[6]`, are significantly less concerned that sharing their pronouns will draw unwanted attention than cisgender men, `r comp1_desc$t[1]`, cisgender women, `r comp1_desc$t[2]`, transgender men `r comp1_desc$t[3]`, and transgender women `r comp1_desc$t[4]`. There were no significant effects between any other groups.
+
+```{r comp3_viz, echo = FALSE, fig.widht = 10, fig.height= 10}
+comp3_fill_data <- pca_all %>%
+  mutate(match = factor(case_when(
+    gender_bin == "Cis Man" ~ "Cis Man",
+    gender_bin == "Cis Woman" ~ "Cis Woman",
+    gender_bin == "Trans Man" ~ "Trans Man",
+    gender_bin == "Trans Woman" ~ "Trans Woman",
+    gender_bin == "Non-binary" ~ "Non-binary",
+    TRUE ~ "Other"
+  )))
+pca_comp3_vis_all <- pca_out %>%
+    fviz_pca_ind(axes = c(1, 3),
+        title = "",
+        palette = colors,
+        geom.ind = "point",
+        pointshape = 21, 
+        pointsize = 2, 
+        fill = fill_data$match,
+        habillage = fill_data$match,
+        addEllipses = TRUE,
+        label = "var",
+        repel = TRUE,
+        legend.title = "Gender") +
+  xlab(paste("Cisnormativity", pca_component_var$t[1])) +
+  ylab(paste("Concern about sharing pronouns", pca_component_var$t[3]))
+pca_comp3_vis_signif <- pca_out %>%
+    fviz_pca_ind(axes = c(1, 3),
+        title = "",
+        select.ind = list(name = which(comp3_fill_data$match != "Other")),
+        palette = colors[c(1, 3, 4, 5, 7)],
+        geom.ind = "point",
+        pointshape = 21, 
+        pointsize = 2, 
+        fill = fill_data$match,
+        habillage = fill_data$match,
+        addEllipses = TRUE,
+        label = "var",
+        repel = TRUE,
+        legend.title = "Gender") +
+  theme(legend.position = "none") +
+  xlab(paste("Cisnormativity", pca_component_var$t[1])) +
+  ylab(paste("Concern about sharing pronouns", pca_component_var$t[3]))
+ggarrange(pca_comp3_vis_all, pca_comp3_vis_signif,
+          nrow = 2,
+          labels = c("All individuals", "Men, women, and non-binary individuals")) %>%
+  annotate_figure(top = text_grob("PCA Components 1 & 3 by Gender", face = "bold", size = 14))
+```
+However, this may be due to the fact that this is the third component which only accounts for `r pca_component_var$percent[3] * 100`% of the total variation. Visualization of the third component shows that there is considerable variation within groups. 

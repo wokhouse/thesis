@@ -28,7 +28,6 @@ lof: true
 #- \usepackage{tikz}
 ---
 
-
 <!--
 Above is the YAML (YAML Ain't Markup Language) header that includes a lot of metadata used to produce the document.  Be careful with spacing in this header!
 
