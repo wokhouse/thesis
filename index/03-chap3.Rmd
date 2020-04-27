@@ -19,7 +19,27 @@ library(factoextra)
 library(diptest)
 source(here("index", "analysis", "qualtrics.R"))
 ```
-
+```{r helper_functions, include = FALSE}
+# makes p value text for reporting e.g. *p* = 0.09, *p* < 0.001
+pval_text <- function (p) {
+  val <- case_when(
+    p < 0.001 ~  "< 0.001",
+    p < 0.01 ~  "< 0.01",
+    TRUE ~ paste("= ", round(p, digits = 2))
+  )
+  paste("*p*", val)
+}
+anova_text <- function(a) {
+  a %>%
+    mutate_if(is.numeric, round, digits = 2) %>%
+    mutate(t = paste("*F*(",df, ", ", last(a$df), ") = ", statistic, ", ", pval_text(p.value),sep = ""))
+}
+desc_text <- function(d) {
+  d %>%
+    mutate_if(is.numeric, round, digits = 2) %>%
+    mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
+}
+```
 ## Demographics
 ### Gender
 I collected gender-related demographic data by asking participants to write in their gender identity and answer a series of yes/no questions: "Are you cisgender?," "Are you transgender?," and "Is your gender non-binary?" Answering yes on one question did not force the participants to answer no on others—this treated gender identity as a collection of separate, related labels that participants may or may not identify with simultaneously. Responses for the write-in question were qualitatively coded by me. 
@@ -354,40 +374,47 @@ mod_data %>%
 
 ### Comfort sharing pronouns
 <!-- includes items 1, 2, 3, 7, 8, 9 -->
-```{r comfort_sharing, echo = FALSE}
-comfort_data <- mod_data %>%
+```{r comfort_sharing, echo = FALSE, include=FALSE}
+comfort_setting_data <- mod_data %>%
   select(
     gender_bin,
     pronoun_bin,
-    starts_with("comfort_")
+    comfort_general,
+    comfort_reed,
+    comfort_class
   ) %>%
   filter(complete.cases(.)) %>%
   pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
-comfort_anova_raw <- comfort_data %>%
+comfort_setting_anova_raw <- comfort_setting_data %>%
   aov(val ~ factor + pronoun_bin + gender_bin + factor:gender_bin + factor:pronoun_bin, .)
-comfort_anova <- comfort_anova_raw %>% tidy()
-comfort_tukey <- comfort_anova_raw %>%
+comfort_setting_anova <- comfort_setting_anova_raw %>% tidy() %>% anova_text()
+comfort_setting_tukey <- comfort_setting_anova_raw %>%
   TukeyHSD() %>%
   tidy() %>%
   filter(adj.p.value < 0.05)
-comfort_desc_factor <- comfort_data %>%
+comfort_desc_setting_factor <- comfort_setting_data %>%
   group_by(factor) %>%
-  summarise(mean = mean(val), sd = sd(val))
-comfort_desc_pronoun <- comfort_data %>%
+  summarise(mean = mean(val), sd = sd(val)) %>%
+  desc_text()
+comfort_desc_setting_pronoun <- comfort_setting_data %>%
   group_by(pronoun_bin) %>%
-  summarise(mean = mean(val), sd = sd(val))
-comfort_desc_gender <- comfort_data %>%
+  summarise(mean = mean(val), sd = sd(val)) %>%
+  desc_text()
+comfort_desc_setting_gender <- comfort_setting_data %>%
   group_by(gender_bin) %>%
-  summarise(mean = mean(val), sd = sd(val))
-comfort_desc_factorgender <- comfort_data %>%
+  summarise(mean = mean(val), sd = sd(val)) %>%
+  desc_text()
+comfort_desc_setting_factorgender <- comfort_setting_data %>%
   group_by(factor, gender_bin) %>%
-  summarise(mean = mean(val), sd = sd(val))
-comfort_desc_factorpronoun <- comfort_data %>%
+  summarise(mean = mean(val), sd = sd(val)) %>%
+  desc_text()
+comfort_desc_setting_factorpronoun <- comfort_setting_data %>%
   group_by(factor, pronoun_bin) %>%
-  summarise(mean = mean(val), sd = sd(val))
+  summarise(mean = mean(val), sd = sd(val)) %>%
+  desc_text()
 ```
 Items 1, 2, 3, 7, 8, and 9 touched on participant's comfort sharing their pronouns.
-A factorial ANOVA found x effect of setting and x effect of a third-party's presence or initiation on sharing pronouns. 
+A factorial ANOVA found a significant effect of setting, gender, and pronouns on comfort sharing pronouns, `r comfort_setting_anova$t[1]`. A post-hoc Tukey test found that generally, students are more comfortable sharing pronouns in class, `r comfort_desc_setting_factor$t[1]`, and in non-academic settings at Reed, `r comfort_desc_setting_factor$t[3]`, than they are in general, `r comfort_desc_setting_factor$t[2]`. It also found that cisgender men, `r comfort_desc_setting_gender$t[1]`, are more comfortable sharing their pronouns than trans men, `r comfort_desc_setting_gender$t[3]`, trans women, `r comfort_desc_setting_gender$t[4]`, and non-binary people, `r comfort_desc_setting_gender$t[6]`. **There are a lot of other effects (126 total!) and I'm not sure how to report all of them.**
 
 ### Desire to share pronouns
 <!-- includes items 4, 5, 6 -->
@@ -637,18 +664,6 @@ ggarrange(pca_vis_all,
           labels = "All individuals") %>%
   annotate_figure(top = text_grob("PCA Components 1 & 2 by Gender", face = "bold", size = 14))
 ```
-```{r comp1_bimodal_check, echo = FALSE}
-comp1_bimodal <- tidy(pca_out, "u") %>%
-  filter(PC == 1) %>%
-  select(value) %>%
-  unlist() %>%
-  dip.test() %>%
-  tidy() %>%
-  mutate_if(is.numeric, round, digits = 3) %>%
-  mutate(t = paste("(*D* = ", statistic, ", *p* = ", p.value, ")", sep = ""))
-```
-Visualization of the first and second component indicated possible bimodality along the first component. Hartigan's dip test confirmed this, `r comp1_bimodal$t[1]`. This indicates that experiences with cisnormativity may be described as bimodal, likely indicating that cisgender and non-cisgender people have significantly different experiences navigating the world as their gender. 
-
 ```{r comp1_anova, echo = FALSE}
 pca_comp1_out <- tidy(pca_out, "u") %>%
   filter(PC == 1) %>%
@@ -657,7 +672,7 @@ comp1_anova_raw <- pca_comp1_out %>%
   aov(value ~ gender_bin, .)
 comp1_anova <- tidy(comp1_anova_raw) %>%
   mutate_if(is.numeric, round, digits = 2) %>%
-  mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", *p* < 0.001",sep = ""))
+  mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", ", pval_text(p.value),sep = ""))
 comp1_tukey <- comp1_anova_raw %>%
   TukeyHSD() %>%
   tidy() %>%
@@ -670,6 +685,29 @@ comp1_desc <- pca_comp1_out %>%
   mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
 ```
 A one-way ANOVA demonstrated a significant effect of gender on the first component, `r comp1_anova$t[1]`. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, and women, `r comp1_desc$t[2]`, are significantly less affected by cisnormativity than trans men, `r comp1_desc$t[3]`, trans women, `r comp1_desc$t[4]`, cisgender non-binary people, `r comp1_desc$t[5]`, non-binary people, `r comp1_desc$t[6]`, and transgender non-binary people, `r comp1_desc$t[7]`. Cisgender non-binary people are also less affected than trans men, trans women, non-binary people, and transgender non-binary people. Trans non-binary people are also more affected than non-binary people.  
+```{r comp1_bimodal_check, echo = FALSE}
+comp1_bimodal <- tidy(pca_out, "u") %>%
+  filter(PC == 1) %>%
+  select(value) %>%
+  unlist() %>%
+  dip.test() %>%
+  tidy() %>%
+  mutate_if(is.numeric, round, digits = 3) %>%
+  mutate(t = paste("(*D* = ", statistic, ", *p* = ", p.value, ")", sep = ""))
+# visualize 
+tidy(pca_out, "x") %>% 
+  filter(PC == 1) %>% 
+  cbind(pca_all) %>% 
+  ggplot(aes(x = value)) + 
+  geom_dotplot(aes(fill = factor(gender_bin, levels = c("Cis Man", "Cis Non-binary", "Cis Woman", "Non-binary", "Trans Man", "Trans Non-binary", "Trans Woman"))), stackgroups = T, binpositions="all", binwidth = 0.28) +
+  scale_fill_manual(values = colors) + 
+  labs(fill = "Gender") +
+  xlab("Experienced Cisnormativity") +
+  # y axis isn't really meaningful, so hide it
+  scale_y_continuous(NULL, breaks = NULL)
+```
+Visualization of the first component indicated possible bimodality along the first component. Hartigan's dip test indicated that the distribution along the first component is unlikely to be unimodal, `r comp1_bimodal$t[1]`. This indicates that experiences with cisnormativity may be as bimodal. This indicates that cisgender and non-cisgender people may have significantly different experiences navigating the world as their gender. 
+
 
 ```{r comp2_anova, echo = FALSE}
 pca_comp2_out <- tidy(pca_out, "u") %>%
@@ -713,9 +751,9 @@ comp3_desc <- pca_comp3_out %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
 ```
-**Am I interpreting this right?** A final one-way ANOVA demonstrated a significant effect of gender on the third component, `r comp3_anova$t[1]`. Non-binary people, `r comp1_desc$t[6]`, are significantly less concerned that sharing their pronouns will draw unwanted attention than cisgender men, `r comp1_desc$t[1]`, cisgender women, `r comp1_desc$t[2]`, transgender men `r comp1_desc$t[3]`, and transgender women `r comp1_desc$t[4]`. There were no significant effects between any other groups.
+A final one-way ANOVA demonstrated a significant effect of gender on the third component, `r comp3_anova$t[1]`. Non-binary people, `r comp1_desc$t[6]`, are significantly less concerned that sharing their pronouns will draw unwanted attention than cisgender men, `r comp1_desc$t[1]`, cisgender women, `r comp1_desc$t[2]`, transgender men `r comp1_desc$t[3]`, and transgender women `r comp1_desc$t[4]`. There were no significant effects between any other groups.
 
-```{r comp3_viz, echo = FALSE, fig.widht = 10, fig.height= 10}
+```{r comp3_viz, echo = FALSE, fig.widht = 8, fig.height= 9}
 comp3_fill_data <- pca_all %>%
   mutate(match = factor(case_when(
     gender_bin == "Cis Man" ~ "Cis Man",
