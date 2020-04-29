@@ -8,33 +8,21 @@ source('analysis/qualtrics.R')
 
 ## Participants
 
-`r nrow(mod_data)` undergraduate students from Reed College in Portland, Oregon participated in an online survey about "attitudes towards gendered pronouns." Participants were recruited through online advertisements and posters around campus. Notably, this sample is around one-third of the undergraduate student body. Data collection was conducted over a two month period, starting in February 2020. It should also be noted that the global pandemic that occurred in early 2020 shortened our opportunity to collect data. 
+Undergraduate students from Reed College in Portland, Oregon participated in an online survey about "attitudes towards gendered pronouns." Participants were recruited through online advertisements and posters around campus. 
 
-Participants of all genders were recruited, including cisgender participants. @tateIntegratingStudyTransgender2014 advocate for the integration of cisgender and non-cisgender gender research into one body of research on gender identity development. They push back on the common assumption that cisgender people do not undergo a period of self-reflection and self-categorization in the maturation of their gender identity. Furthermore, by not excluding cisgender participants from the study, we allowed freer self-categorization e.g. for the inclusion of people who identified as cisgender and non-binary. 
+Participants of all genders were recruited, including cisgender participants. @tateIntegratingStudyTransgender2014 advocate for the integration of cisgender and non-cisgender gender research into one body of research on gender identity development. They push back on the common assumption that cisgender people do not undergo a period of self-reflection and self-categorization in the maturation of their gender identity. Furthermore, by not excluding cisgender participants from the study, we allowed freer self-categorization e.g. for the inclusion of people who identified as cisgender and non-binary. Therefore, there were virtually no exclusion criteria for participation. Advertisements included text such as "Hey! Do you use pronouns and/or have a gender?" in an attempt to reach as many people as possible. 
 
-## Transgender Inclusive Behavior Scale (TIBS)
+`r total_responses` people responded to the survey. `r total_responses - total_complete_responses` responses were excluded because they were incomplete. `r total_nonundergrad` were excluded because they were not undergraduate students. Our final sample was `r nrow(mod_data)` students. Notably, Reed's undergraduate student body size is 1,457 students [@reedcollegeinstitutionalresearchFactsReed2019], so this sample includes `r round(nrow(mod_data) / 1451, digits = 2) * 100`% of the school. 
 
-The Transgender Inclusive Behavior Scale was developed by @kattariDevelopmentValidationTransgender2018 to provide a measure for actions and modes of communication that are inclusive and supportive of transgender people. The TIBS was developed for participants of all gender identities—not exclusively cisgender people. 
+## Survey
 
-The TIBS includes a broad array of trans affirming behaviors. This includes several items such as sharing their own pronouns and asking for others', educating themselves on local policies that may affect transgender people, and speaking out against transphobia in their communities. 
+Participants participated online through Qualtrics. The survey was advertised as taking 5-10 minutes. Participants agreed to a consent page, then answered questions about their relationship with pronouns and gender, then questions about misgendering frequency [@mclemoreExperiencesMisgenderingIdentity2015], then the Transgender Inclusive Behavior Scale [@kattariDevelopmentValidationTransgender2018], then the Transgender Congruence Scale [@kozeeMeasuringTransgenderIndividuals2012], and the finally questions about their demographics. 
 
-Responses were collected as five-point likert scales ranging from "Never" to "Always." Each participant's responses were added to produce a score that generally represented how many inclusive behaviors one performed.
-
-While selecting our measures, we elected to use the TIBS in lieu of a measure such as the transphobia scale developed by @nagoshiGenderDifferencesCorrelates2008. This was done to generally frame the study as positive and affirming for transgender people. Administering questions about transphobic attitudes to transgender people who are the victims of transphobia and transmisogynistic violence could have been significantly more distressing than asking about affirming and supportive behaviors. Essentially, the TIBS was included as a proxy for how intentionally participants supported and affirmed their transgender peers. 
-
-An added potential benefit to administering the TIBS to cisgender participants is that it potentially includes actions that cisgender people had not yet considered doing to support their transgender peers. As data collection progressed, the author received several messages from participants reporting that they had never considered some of the actions, like ensuring that gender-neutral bathrooms were available at events that they organized. 
-
-## Transgender Congruence Scale (TCS)
-
-The Transgender Congruence Scale was developed by @kozeeMeasuringTransgenderIndividuals2012 to provide a measure for how transgender people feel "genuine, authentic, and comfortable with their gender identity and external appearance." The TCS was developed for transgender participants. However, we elected to administer the TCS to cisgender participants as well. This was done to avoid presuming that cisgender people have a purely passive relationship with their gender, as is advocated for by @tateIntegratingStudyTransgender2014. 
-
-Responses were collected as five-point likert scales ranging from "Strongly Disagree" to "Strongly Agree" Each participant's responses were added to produce a score that generally represented how congruent one felt with one's gender identity. The TCS consists of 12 items that include relationships between the participant's gender identity, their physical appearance and presentation, their body, and their social experience with gender. 
-
-## Gendered Pronoun Attitude Survey (GPAS)
+### Gendered Pronoun Attitude Survey (GPAS)
 
 The GPAS was developed as a broad survey of undergraduate students' relationships and experiences with gendered pronouns. Many items were phrased similarly to questions from the TCS. However, as this is a very novel area of study, the author created most of them herself in consultation with other gender-diverse peers. 
 
-Responses were collected as five-point likert scales ranging from "Strongly Disagree" to "Strongly Agree." In the first block of questions, participants were asked to report their experiences from the past two weeks. This was done to reflect the Transgender Congruence Scale (TCS) by @kozeeMeasuringTransgenderIndividuals2012. The TCS asked participants to reflect on their relationship with gender in the past two weeks. 
+Responses were collected as five-point likert scales ranging from "Strongly Disagree" to "Strongly Agree." In the first block of questions, participants were asked to report their experiences from the past two weeks. This was done to reflect the Transgender Congruence Scale (TCS) by @kozeeMeasuringTransgenderIndividuals2012. The TCS asked participants to reflect on their relationship with gender in the past two weeks. Participants were given definitions for gender identity and pronouns: *Gender identity is defined as the gender/genders that you experience yourself as; it is not necessarily related to your assigned gender at birth. Pronouns are the words someone else can use to refer to you. For example, someone who uses she/her pronouns would be referred to like this: “She rides the bus.”*
 ```{r, echo = FALSE}
 data.frame(question = c(
   "I feel comfortable sharing my pronouns in most settings.",
@@ -74,8 +62,26 @@ data.frame(question = c(
   )
 ```
 
-## Demographic Quesitons
+### Transgender Inclusive Behavior Scale (TIBS)
 
-### Gender-related Demographic Questions
+The Transgender Inclusive Behavior Scale was developed by @kattariDevelopmentValidationTransgender2018 to provide a measure for actions and modes of communication that are inclusive and supportive of transgender people. The TIBS was developed for participants of all gender identities—not exclusively cisgender people. 
 
-### Other Demographic Questions
+The TIBS includes a broad array of trans affirming behaviors. This includes several items such as sharing their own pronouns and asking for others', educating themselves on local policies that may affect transgender people, and speaking out against transphobia in their communities. 
+
+Responses were collected as five-point likert scales ranging from "Never" to "Always." Each participant's responses were added to produce a score that generally represented how many inclusive behaviors one performed.
+
+While selecting our measures, we elected to use the TIBS in lieu of a measure such as the transphobia scale developed by @nagoshiGenderDifferencesCorrelates2008. This was done to generally frame the study as positive and affirming for transgender people. Administering questions about transphobic attitudes to transgender people who are the victims of transphobia and transmisogynistic violence could have been significantly more distressing than asking about affirming and supportive behaviors. Essentially, the TIBS was included as a proxy for how intentionally participants supported and affirmed their transgender peers. 
+
+An added potential benefit to administering the TIBS to cisgender participants is that it potentially includes actions that cisgender people had not yet considered doing to support their transgender peers. As data collection progressed, the author received several messages from participants reporting that they had never considered some of the actions, like ensuring that gender-neutral bathrooms were available at events that they organized. 
+
+### Transgender Congruence Scale (TCS)
+
+The Transgender Congruence Scale was developed by @kozeeMeasuringTransgenderIndividuals2012 to provide a measure for how transgender people feel "genuine, authentic, and comfortable with their gender identity and external appearance." The TCS was developed for transgender participants. However, we elected to administer the TCS to cisgender participants as well. This was done to avoid presuming that cisgender people have a purely passive relationship with their gender, as is advocated for by @tateIntegratingStudyTransgender2014. 
+
+Responses were collected as five-point likert scales ranging from "Strongly Disagree" to "Strongly Agree" Each participant's responses were added to produce a score that generally represented how congruent one felt with one's gender identity. The TCS consists of 12 items that include relationships between the participant's gender identity, their physical appearance and presentation, their body, and their social experience with gender. 
+
+### Demographic Quesitons
+
+Participants were asked their age, ethnicity, year at Reed, major, gender, pronouns, and sexual orientation. Sexual orientation and pronouns were short answer write-in field. This was done to avoid presupposing any orientation or pronoun over the other, as well as to allow participants to describe their relationship with either in as much or as little depth as they deemed fit. 
+
+Gender was collected in four parts: first, participants responded to a short answer write-in field. Then, they answered three yes/no questions: "Are you cisgender?", "Are you transgender?", and "Is your gender non-binary?". Answering yes on one question did not force participants to answer no on any others. By separating cisness, transness, and non-binary status from gender identity, we allowed these words to serve as modes of relating to one's gender. Because this is a study of gender identity and trans experiences, it was analytically important to separate *relationship* to gender identity from gender identity. However, in everyday life, the author firmly believes that this does not matter, e.g. there is no fundamental difference between cisgender and transgender women, and to treat them any differently is to perpetuate transmisogynistic violence.  

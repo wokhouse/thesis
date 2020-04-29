@@ -242,7 +242,7 @@ bin_genders <- function(data) {
     ))
 }
 
-mod_data <- survey_dat %>%
+all_resp_mod_data <- survey_dat %>%
   filter(Finished == TRUE) %>%
   recode_likert() %>%
   convert_factors() %>%
@@ -251,9 +251,24 @@ mod_data <- survey_dat %>%
   calc_scores() %>%
   select_cols() %>%
   process_qual() %>%
-  bin_genders() %>%
+  bin_genders()
+
+mod_data <- all_resp_mod_data %>%
   filter(year != "Other") %>%
   arrange(timestamp)
+
+total_responses <- survey_dat %>%
+  nrow()
+
+total_complete_responses <- survey_dat %>%
+  filter(Finished == TRUE) %>%
+  nrow()
+
+total_nonundergrad <- all_resp_mod_data %>%
+  filter(year == "Other") %>%
+  nrow()
+
+
 
 # mod_data %>%
 #   filter(gender_bin == "Non-binary" | gender_bin == "Cis Non-binary") %>%
