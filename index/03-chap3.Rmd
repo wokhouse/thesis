@@ -17,6 +17,7 @@ library(ggpubr)
 library(ggsci)
 library(factoextra)
 library(diptest)
+library(agricolae)
 source(here("index", "analysis", "qualtrics.R"))
 ```
 ```{r helper_functions, include = FALSE}
@@ -386,7 +387,7 @@ comfort_setting_data <- mod_data %>%
   filter(complete.cases(.)) %>%
   pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
 comfort_setting_anova_raw <- comfort_setting_data %>%
-  aov(val ~ factor + pronoun_bin + gender_bin + factor:gender_bin + factor:pronoun_bin, .)
+  aov(val ~ factor + pronoun_bin + gender_bin, .)
 comfort_setting_anova <- comfort_setting_anova_raw %>% tidy() %>% anova_text()
 comfort_setting_tukey <- comfort_setting_anova_raw %>%
   TukeyHSD() %>%
@@ -404,26 +405,217 @@ comfort_desc_setting_gender <- comfort_setting_data %>%
   group_by(gender_bin) %>%
   summarise(mean = mean(val), sd = sd(val)) %>%
   desc_text()
-comfort_desc_setting_factorgender <- comfort_setting_data %>%
-  group_by(factor, gender_bin) %>%
-  summarise(mean = mean(val), sd = sd(val)) %>%
-  desc_text()
-comfort_desc_setting_factorpronoun <- comfort_setting_data %>%
-  group_by(factor, pronoun_bin) %>%
-  summarise(mean = mean(val), sd = sd(val)) %>%
-  desc_text()
 ```
 Items 1, 2, 3, 7, 8, and 9 touched on participant's comfort sharing their pronouns.
-A factorial ANOVA found a significant effect of setting, gender, and pronouns on comfort sharing pronouns, `r comfort_setting_anova$t[1]`. A post-hoc Tukey test found that generally, students are more comfortable sharing pronouns in class, `r comfort_desc_setting_factor$t[1]`, and in non-academic settings at Reed, `r comfort_desc_setting_factor$t[3]`, than they are in general, `r comfort_desc_setting_factor$t[2]`. It also found that cisgender men, `r comfort_desc_setting_gender$t[1]`, are more comfortable sharing their pronouns than trans men, `r comfort_desc_setting_gender$t[3]`, trans women, `r comfort_desc_setting_gender$t[4]`, and non-binary people, `r comfort_desc_setting_gender$t[6]`. **There are a lot of other effects (126 total!) and I'm not sure how to report all of them.**
+A one-way ANOVA found a significant effect of setting, gender, and pronouns on comfort sharing pronouns, `r comfort_setting_anova$t[1]`. A post-hoc Tukey test found that generally, students are more comfortable sharing pronouns in class, `r comfort_desc_setting_factor$t[1]`, and in non-academic settings at Reed, `r comfort_desc_setting_factor$t[3]`, than they are in general, `r comfort_desc_setting_factor$t[2]`. It also found that cisgender men, `r comfort_desc_setting_gender$t[1]`, are more comfortable sharing their pronouns than trans men, `r comfort_desc_setting_gender$t[3]`, trans women, `r comfort_desc_setting_gender$t[4]`, and non-binary people, `r comfort_desc_setting_gender$t[6]`. 
+
+```{r comfort_sharing_bysetting, echo = FALSE}
+comfort_general_anova_raw <- comfort_setting_data %>%
+  filter(factor == "comfort_general") %>%
+  aov(val ~ gender_bin, .)
+comfort_reed_anova_raw <- comfort_setting_data %>%
+  filter(factor == "comfort_reed") %>%
+  aov(val ~ gender_bin, .)
+comfort_class_anova_raw <- comfort_setting_data %>%
+  filter(factor == "comfort_class") %>%
+  aov(val ~ gender_bin, .)
+comfort_general_anova <- comfort_general_anova_raw %>% tidy() %>% anova_text()
+comfort_reed_anova <- comfort_reed_anova_raw %>% tidy() %>% anova_text()
+comfort_class_anova <- comfort_class_anova_raw %>% tidy() %>% anova_text()
+comfort_general_tukey <- comfort_general_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05)
+comfort_reed_tukey <- comfort_reed_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05)
+comfort_class_tukey <- comfort_class_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05)
+```
+One-way ANOVAs were used on each setting to elucidate effects of gender and pronoun within each setting. There were significant effects of gender in general, `r comfort_general_anova$t[1]`, in non-academic settings at Reed, `r comfort_reed_anova$t[1]`, and in class,  `r comfort_class_anova$t[1]`. There were also significant effects of pronouns in general, `r comfort_general_anova$t[2]`, in non-academic settings at Reed, `r comfort_reed_anova$t[2]`, and in class,  `r comfort_class_anova$t[2]`. 
+
+Post-hoc Tukey tests were used to compare gender groups within each setting. In general, cisgender men were more comfortable sharing their pronouns than trans women, non-binary people, and transgender non-binary people. In addition, cisgender women were more comfortable sharing their pronouns than trans men, trans women, cisgender non-binary people, non-binary people, and transgender non-binary people. 
+
+**I also need to talk about social stuff eg if the prof or another student shares their pronouns first**
+```{r comfort_sharing_socialfactors, echo = FALSE}
+comfort_social_data <- mod_data %>%
+  select(
+    ends_with("_bin"),
+    comfort_proffirst,
+    comfort_withsimilargenders,
+    comfort_someoneelsefirst
+  ) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
+# one-way anova for all settings
+comfort_social_anova_raw <- comfort_social_data %>%
+  aov(val ~ factor + pronoun_bin + gender_bin, .)
+comfort_social_anova <- comfort_social_anova_raw %>%
+  tidy() %>%
+  anova_text()
+comfort_social_tukey <- comfort_social_anova_raw %>%
+  TukeyHSD() %>%
+  tidy()
+# anova and tukey for prof first
+comfort_social_proffirst_data <- mod_data %>% select(ends_with("_bin"), comfort_proffirst) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
+comfort_social_proffirst_anova_raw <- comfort_social_proffirst_data %>%
+  aov(val ~ gender_bin, .)
+comfort_social_proffirst_anova <- comfort_social_proffirst_anova_raw %>% tidy() %>% anova_text()
+comfort_social_proffirst_tukey <- comfort_social_proffirst_anova_raw %>% TukeyHSD() %>% tidy()
+# anova and tukey for prof first
+comfort_social_withsimilargenders_data <- mod_data %>% select(ends_with("_bin"), comfort_withsimilargenders) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
+comfort_social_withsimilargenders_anova_raw <- comfort_social_withsimilargenders_data %>%
+  aov(val ~ gender_bin, .)
+comfort_social_withsimilargenders_anova <- comfort_social_withsimilargenders_anova_raw %>% tidy() %>% anova_text()
+comfort_social_withsimilargenders_tukey <- comfort_social_withsimilargenders_anova_raw %>% TukeyHSD() %>% tidy()
+# anova and tukey for prof first
+comfort_social_someoneelsefirst_data <- mod_data %>% select(ends_with("_bin"), comfort_someoneelsefirst) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
+comfort_social_someoneelsefirst_anova_raw <- comfort_social_someoneelsefirst_data %>%
+  aov(val ~ gender_bin, .)
+comfort_social_someoneelsefirst_anova <- comfort_social_someoneelsefirst_anova_raw %>% tidy() %>% anova_text()
+comfort_social_someoneelsefirst_tukey <- comfort_social_someoneelsefirst_anova_raw %>% TukeyHSD() %>% tidy()
+```
+A one-way ANOVA was used to examine effects of social factors, gender, and pronouns on comfort sharing pronouns. Specifically, we examined whether people were more comfortable sharing their pronouns when a professor did so first, when someone else did first, and when the participant was with people of similar genders to their own. There were significant effects of social factor, `r comfort_social_anova$t[1]`, gender, `r comfort_social_anova$t[3]`, and pronouns, `r comfort_social_anova$t[2]`. A post-hoc Tukey test revealed that someone else saying their pronouns first makes the largest difference in making others comfortable sharing their pronouns. This is followed by the professor sharing their pronouns first, and finally the presence of people of similar genders to one's own. 
+
+One way-ANOVA and Tukey tests were used within each social factor to examine effects of gender. **ahahahaha**
 
 ### Desire to share pronouns
 <!-- includes items 4, 5, 6 -->
+```{r comfort_sharing_blah, echo = FALSE, include=FALSE}
+desire_setting_data <- mod_data %>%
+  select(
+    gender_bin,
+    pronoun_bin,
+    desire_general,
+    desire_reed,
+    desire_class
+  ) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("desire_"), names_to = "factor", values_to = "val")
+desire_setting_anova_raw <- desire_setting_data %>%
+  aov(val ~ factor + pronoun_bin + gender_bin, .)
+desire_setting_anova <- desire_setting_anova_raw %>% tidy() %>% anova_text()
+desire_setting_tukey <- desire_setting_anova_raw %>%
+  TukeyHSD() %>%
+  tidy() %>%
+  filter(adj.p.value < 0.05)
+```
+Items 4, 5, and 6 touched on participant's desire to share their pronouns. A one-way ANOVA revealed significant effects of setting, `r desire_setting_anova$t[1]`, gender, `r desire_setting_anova$t[3]`, and pronouns `r desire_setting_anova$t[2]`. A post-hoc Tukey test revealed that people;s desire to share their pronouns is highest in classroom settings, followed by non-accade mic ettings atReed, and then lowest in general. Trans men reported a higher desire to share their pronouns than cisgender men, cisgender women, transgender women, cisgender non-binary people, and non-binary people. Transgender non-binary people also reported a higher desire to share their pronouns than cisgender men and non-binary people. 
 
 ### Concerns about sharing pronouns
 <!-- includes items 10, 11, 12 -->
+```{r concern_sharing, echo = FALSE}
+concern_data <- mod_data %>%
+  select(
+    ends_with("_bin"),
+    starts_with("attention_")
+  ) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("attention_"), names_to = "factor", values_to = "val")
+# one-way anova for all settings
+concern_anova_raw <- concern_data %>%
+  aov(val ~ factor + pronoun_bin + gender_bin, .)
+concern_anova <- concern_anova_raw %>%
+  tidy() %>%
+  anova_text()
+concern_tukey <- concern_anova_raw %>%
+  TukeyHSD() %>%
+  tidy()
+```
+Items 10, 11, and 12 touched on participant's concern that sharing their pronouns would draw unwanted attention to themselves. There were significant effects of setting, `r concern_anova$t[1]`, gender `r concern_anova$t[3]`, and pronouns, `r concern_anova$t[2]` on concern that sharing one's pronouns would draw unwanted attention to oneself. A post-hoc Tukey test revealed that participants were most concerned that sharing their pronouns would draw unwanted attention to them in general, followed by in non-academic settings at Reed, and least concerned in class. 
 
 ### Congruence and perception of pronouns
 <!-- includes items 13, 14, 15, 16, 17 18 -->
+Items 13, 14, 15, 16, 17 and 18 touched upon participant's relationship to their pronouns, gender, and appearance. We ran one-way ANOVAs examing effects of gender and pronouns on each item with pos-hoc Tukey tests where relevant. 
+```{r item13, echo = FALSE}
+item13_data <- mod_data %>%
+  select(
+    gender_bin,
+    gender_perception_consistent
+  ) %>%
+  filter(complete.cases(.))
+item13_anova_raw <- item13_data %>%
+  aov(gender_perception_consistent ~ gender_bin, .)
+item13_anova <- item13_anova_raw %>% tidy() %>% anova_text()
+item13_tukey <- item13_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05) 
+item13_desc <- item13_data %>% group_by(gender_bin) %>% summarise(mean = mean(gender_perception_consistent), sd = sd(gender_perception_consistent)) %>% desc_text()
+```
+On item 13 ("I feel that the gender that people perceive me as and my pronouns are consistent with one another."), there was a significant effect of gender, `r item13_anova$t[1]`. A post-hoc Tukey test found that cis men, `r item13_desc$t[1]`, experience higher consistency than trans men, `r item13_desc$t[3]`, trans women, `r item13_desc$t[4]`, cis non-binary people, `r item13_desc$t[5]`, non-binary people, `r item13_desc$t[6]`, and trans non-binary people, `r item13_desc$t[7]`. Cis women, `r item13_desc$t[2]`, also experience higher consistency than trans men, trans women, cis non-binary people, non-binary people, and trans non-binary people. Cis non-binary people also experience higher consistency than trans women. Finally, cis non-binary people experience higher consistency than non-binary people and trans non-binary people. There were no other significant differences between groups. 
+
+```{r item14, echo = FALSE}
+item14_data <- mod_data %>%
+  select(
+    gender_bin,
+    gender_pronouns_consistent
+  ) %>%
+  filter(complete.cases(.))
+item14_anova_raw <- item14_data %>%
+  aov(gender_pronouns_consistent ~ gender_bin, .)
+item14_anova <- item14_anova_raw %>% tidy() %>% anova_text()
+item14_tukey <- item14_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05) 
+item14_desc <- item14_data %>% group_by(gender_bin) %>% summarise(mean = mean(gender_pronouns_consistent), sd = sd(gender_pronouns_consistent)) %>% desc_text()
+```
+On item 14 ("I feel that my internal gender identity and pronouns are consistent with one another."), there was a significant effect of gender, `r item14_anova$t[1]`. A post-hoc Tukey test found that cis men, `r item14_desc$t[1]`, and cis women, `r item14_desc$t[2]`, reported higher consistency than cis non-binary people, `r item14_desc$t[5]`, non-binary people, `r item14_desc$t[6]`, and trans non-binary people, `r item14_desc$t[7]`. Trans men, `r item14_desc$t[3]`, also reported higher consistency than cis non-binary people and non-binary people. Trans non-binary people also reported higher consistency than non-binary people. There were no other significant differences between groups. 
+
+```{r item15, echo = FALSE}
+item15_data <- mod_data %>%
+  select(
+    gender_bin,
+    pronouns_represent
+  ) %>%
+  filter(complete.cases(.))
+item15_anova_raw <- item15_data %>%
+  aov(pronouns_represent ~ gender_bin, .)
+item15_anova <- item15_anova_raw %>% tidy() %>% anova_text()
+item15_tukey <- item15_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05) 
+item15_desc <- item15_data %>% group_by(gender_bin) %>% summarise(mean = mean(pronouns_represent), sd = sd(pronouns_represent)) %>% desc_text()
+```
+On item 15 ("I feel that my pronouns represent my gender identity well."), there was a significant effect of gender, `r item15_anova$t[1]`. A post-hoc Tukey test revealed that cis men, `r item15_desc$t[1]`, and cis women, `r item15_desc$t[2]`, reported higher representativeness than cis non-binary people, `r item15_desc$t[5]`, non-binary people, `r item15_desc$t[6]`, and trans non-binary people, `r item15_desc$t[7]`. Furthermore, trans men, `r item15_desc$t[3]`, reported higher representativeness than cis non-binary people and non-binary people. There were no other significant differences between groups. 
+
+```{r item16, echo = FALSE}
+item16_data <- mod_data %>%
+  select(
+    gender_bin,
+    willmisgender_ifnopronouns
+  ) %>%
+  filter(complete.cases(.))
+item16_anova_raw <- item16_data %>%
+  aov(willmisgender_ifnopronouns ~ gender_bin, .)
+item16_anova <- item16_anova_raw %>% tidy() %>% anova_text()
+item16_tukey <- item16_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05) 
+item16_desc <- item16_data %>% group_by(gender_bin) %>% summarise(mean = mean(willmisgender_ifnopronouns), sd = sd(willmisgender_ifnopronouns)) %>% desc_text()
+```
+On item 16 ("If I don’t tell people what my pronouns are, they will misgender me."), there was a significant effect of gender, `r item16_anova$t[1]`. A post-hoc Tukey test revealed that cis men, `r item16_desc$t[1]`, and cis women, `r item16_desc$t[2]`, are misgendered significantly less when they do not share their pronouns when compared to trans men, `r item16_desc$t[3]`, trans women, `r item16_desc$t[4]`, non-binary people, `r item16_desc$t[6]`, and trans non-binary people, `r item16_desc$t[7]`. Furthermore, cis non-binary, `r item16_desc$t[5]`, people are misgendered significantly less than trans men, trans women, and non-binary people. There were no other significant differences between groups. 
+
+```{r item17, echo = FALSE}
+item17_data <- mod_data %>%
+  select(
+    gender_bin,
+    assume_pronouns_correctly
+  ) %>%
+  filter(complete.cases(.))
+item17_anova_raw <- item17_data %>%
+  aov(assume_pronouns_correctly ~ gender_bin, .)
+item17_anova <- item17_anova_raw %>% tidy() %>% anova_text()
+item17_tukey <- item17_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05) 
+item17_desc <- item17_data %>% group_by(gender_bin) %>% summarise(mean = mean(assume_pronouns_correctly), sd = sd(assume_pronouns_correctly)) %>% desc_text()
+```
+On item 17 ("I don’t need to tell people what my pronouns are, because they usually assume correctly."), there was a significant effect of gender, `r item17_anova$t[1]`. A post-hoc Tukey test revealed that people correctly assume cis men's, `r item17_desc$t[1]`, and cis women's, `r item17_desc$t[2]`, pronouns more frequently when compared to trans men, `r item17_desc$t[3]`, trans women, `r item17_desc$t[4]`, cis non-binary people, `r item17_desc$t[5]`, non-binary people, `r item17_desc$t[6]`, and trans non-binary people, `r item17_desc$t[7]`. Cis non-binary people's pronouns are also assumed correctly more frequently than trans women's and trans non-binary people. 
+
+```{r item18, echo = FALSE}
+item18_data <- mod_data %>%
+  select(
+    gender_bin,
+    understand_better
+  ) %>%
+  filter(complete.cases(.))
+item18_anova_raw <- item18_data %>%
+  aov(understand_better ~ gender_bin, .)
+item18_anova <- item18_anova_raw %>% tidy() %>% anova_text()
+item18_tukey <- item18_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05) 
+item18_desc <- item18_data %>% group_by(gender_bin) %>% summarise(mean = mean(understand_better), sd = sd(understand_better)) %>% desc_text()
+```
+Finally, on item 18 ("I feel like people understand me better when I share my pronouns."), there was a significant effect of gender, `r item18_anova$t[1]`. A post-hoc Tukey test revealed that trans men, `r item18_desc$t[3]`, trans women, `r item18_desc$t[4]`, non-binary people, `r item18_desc$t[6]`, and trans non-binary, `r item18_desc$t[7]`, people feel better understood when they share their pronouns when compared to cis men, `r item18_desc$t[1]` and cis women, `r item18_desc$t[2]`. 
 
 ### Historical experience at Reed College
 <!-- includes items 19, 20, 21 -->
