@@ -117,11 +117,14 @@ mod_data %>%
 The most common gender and pronoun combinations were cisgender women that used she/her, `r genderandpronouns_inorder$t[1]`, cisgender men that used he/him, `r genderandpronouns_inorder$t[2]`, transgender non-binary people that used they/them, `r genderandpronouns_inorder$t[3]`, non-binary people that used they/them, `r genderandpronouns_inorder$t[4]`, non-binary people that used she/her and they/them, `r genderandpronouns_inorder$t[5]`, trans men that used he/him, `r genderandpronouns_inorder$t[6]`, and trans women that used she/her, `r genderandpronouns_inorder$t[7]`. 
 
 ### Sexuality
-```{r bipan_overlap, echo = FALSE}
+```{r sexuality_meta, echo = FALSE}
 bipan_overlap <- mod_data %>% filter(sexuality.bisexual == TRUE | sexuality.pansexual == TRUE) %>% 
   group_by(sexuality.bisexual, sexuality.pansexual) %>% 
   tally() %>%
   mutate(t = paste("(*N* = ", n, ")", sep = ""))
+demi_n <- mod_data %>% filter(sexuality.demisexual == TRUE) %>% nrow()
+poly_n <- mod_data %>% filter(sexuality.polyamorous == TRUE) %>% nrow()
+enbian_n <- mod_data %>% filter(sexuality.enbian == TRUE) %>% nrow()
 ```
 Participants were asked to report their sexuality in a write-in field. Responses were qualitatively coded by the author. Many responses were coded with multiple themes, so the total *N* exceeds the sample size. One exceptionally common response was "bisexual/pansexual," `r bipan_overlap$t[3]`, which was coded with both themes.
 
@@ -139,6 +142,7 @@ mod_data %>%
     caption = "Participant sexuality"
   )
 ```
+Additionally, `r demi_n` particiapnts described their sexuality as demisexual, `r poly_n` as polyamourous, and `r enbian_n` as enbian. Some terms, such as "gynophile," were coded as "straight" or "queer" depending on the particiant's gender. 
 
 ```{r genderandsexuality_inorder, echo = FALSE}
 genderandsexuality_inorder <- mod_data %>%
