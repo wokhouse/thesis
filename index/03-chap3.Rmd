@@ -175,7 +175,8 @@ misgendering_stigma_noncis <- mod_data %>%
   select(misgendering_stigma, noncis_stigma)
 # comparing cis and non-cis people misgendering stigmauency
 misgendering_stigma_cisvsnoncis <- mod_data %>%
-  t_test(misgendering_stigma ~ cis, order = c(FALSE, TRUE))
+  t_test(misgendering_stigma ~ cis, order = c(FALSE, TRUE)) %>%
+  mutate_if(is.numeric, round, digits = 2)
 ```
 
 Similar to @mclemoreExperiencesMisgenderingIdentity2015, we had participants report how frequently they were misgendered and how stigmatized misgendering made them feel. However, unlike @mclemoreExperiencesMisgenderingIdentity2015, we administered these questions to cisgender people as well. Independent t-tests were used to compare the cisgender and non-cisgender participants. Non-cisgender participants (*M* = `r misgendering_desc$misgendering_freq_mean[1]`, *SD* = `r misgendering_desc$misgendering_freq_sd[1]`) reported being misgendered more frequently than cisgender participants (*M* = `r misgendering_desc$misgendering_freq_mean[2]`, *SD* = `r misgendering_desc$misgendering_freq_mean[2]`), *t*(`r misgendering_freq_cisvsnoncis$t_df`) = `r round(misgendering_freq_cisvsnoncis$statistic, digits = 1)`, *p* < 0.001.
@@ -232,47 +233,35 @@ Pearson's Chi-squared tests were used to compare the misgendering frequency obse
 There were significant differences when compared to both the study 1 population, *X<sup>2</sup>* (`r study1_chisq$parameter`, *N* = `r sum(study1_chisq$observed, study1_chisq$expected)`) = `r round(study1_chisq$statistic, digits = 2)`, *p* = `r round(study1_chisq$p.value, digits = 2)`, and the study 2 population, *X<sup>2</sup>* (`r study2_chisq$parameter`, *N* = `r sum(study2_chisq$observed, study2_chisq$expected)`) = `r round(study2_chisq$statistic, digits = 2)`, *p* = `r round(study2_chisq$p.value, digits = 2)`.
 
 ```{r misgendering_anova, echo=FALSE}
-misgendering_freq_anova <- aov(misgendering_freq ~ gender_bin, mod_data) %>%
-  tidy() %>%
-  mutate(p.value = round(p.value, digits = 4))
-misgendering_stigma_anova <- aov(misgendering_stigma ~ gender_bin, mod_data) %>%
-  tidy() %>%
-  mutate(p.value = round(p.value, digits = 4))
+misgendering_freq_anova_raw <- aov(misgendering_freq ~ gender_bin + pronoun_bin, mod_data) 
+misgendering_freq_anova <- misgendering_freq_anova_raw %>% tidy() %>% anova_text()
+misgendering_freq_tukey <- misgendering_freq_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05)
+misgendering_freq_gender_desc <- mod_data %>%
+  select(misgendering_freq, gender_bin) %>%
+  filter(complete.cases(.)) %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(misgendering_freq), sd = sd(misgendering_freq)) %>%
+  desc_text()
+misgendering_freq_pronoun_desc <- mod_data %>%
+  select(misgendering_freq, pronoun_bin) %>%
+  filter(complete.cases(.)) %>%
+  group_by(pronoun_bin) %>%
+  summarise(mean = mean(misgendering_freq), sd = sd(misgendering_freq)) %>%
+  desc_text()
+
+misgendering_stigma_anova_raw <- aov(misgendering_stigma ~ gender_bin + pronoun_bin, mod_data)
+misgendering_stigma_anova <- misgendering_stigma_anova_raw %>% tidy() %>% anova_text()
+misgendering_stigma_tukey <- misgendering_stigma_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05)
+misgendering_stigma_gender_desc <- mod_data %>%
+  select(misgendering_stigma, gender_bin) %>%
+  filter(complete.cases(.)) %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(misgendering_stigma), sd = sd(misgendering_stigma)) %>%
+  desc_text()
 ```
-@mclemoreExperiencesMisgenderingIdentity2015 performed a one-way ANOVA "to compare differences among three gender groups (transgender men, transgender women, and genderqueer)" in misgendering frequency and felt stigma when misgendered.
-Because a different approach was taken in collecting gender-related demographic data, we performed a factorial ANOVA comparing endorsement of several endorsed identities on misgendering frequency and felt stigma. 
+We performed a one-way ANOVA examining gender and pronouns' effect on misgendering frequency and felt stigma. There was a significant effect of gender, `r misgendering_freq_anova$t[1]`, and pronouns, `r misgendering_freq_anova$t[2]`, on misgendering frequency. A post-hoc Tukey test revealed that cis men, `r misgendering_freq_gender_desc$t[1]`, and cis women, `r misgendering_freq_gender_desc$t[2]`, get misgendered less frequently than trans men, `r misgendering_freq_gender_desc$t[3]`, trans women, `r misgendering_freq_gender_desc$t[4]`, cis non-binary people, `r misgendering_freq_gender_desc$t[5]`, non-binary people, `r misgendering_freq_gender_desc$t[6]`, and trans non-binary people, `r misgendering_freq_gender_desc$t[7]`. Cis non-binary people also get misgendered less than trans men men, trans women, non-binary people, and trans non-binary people. Trans non-binary people also get misgendered more than non-binary people. Additionally, people who use they/them pronouns, `r misgendering_freq_pronoun_desc$t[7]`, get misgendered more than people who use he/him pronouns, `r misgendering_freq_pronoun_desc$t[2]`, she/her pronouns, `r misgendering_freq_pronoun_desc$t[5]`, both he/him and they/them pronouns, `r misgendering_freq_pronoun_desc$t[4]`, and both she/her and they/them pronouns, `r misgendering_freq_pronoun_desc$t[6]`. 
 
-There were multiple significant effects of identity endorsement on misgendering frequency. 
-Cisgender, *F*(`r misgendering_freq_anova$df[1]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[1], digits = 2)`, *p* < 0.001,
-transgender, *F*(`r misgendering_freq_anova$df[2]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[2], digits = 2)`, *p* < 0.001,
-and non-binary identity, *F*(`r misgendering_freq_anova$df[3]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[3], digits = 2)`, *p* < 0.001, all demonstrated significant effects. 
-There was no significant effect in women (*p* = `r round(misgendering_freq_anova$p.value[5], digits = 2)`) or men (*p* = `r round(misgendering_freq_anova$p.value[4], digits = 2)`) alone. 
-However, there was a significant effect in transgender women, *F*(`r misgendering_freq_anova$df[7]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[7], digits = 2)`, *p* < 0.001. 
-There was not a significant effect in transgender men (*p* = `r round(misgendering_freq_anova$p.value[6], digits = 2)`). 
-There was also a significant effect in non-binary women , *F*(`r misgendering_freq_anova$df[7]`, `r tail(misgendering_freq_anova$df,1)`) = `r round(misgendering_freq_anova$statistic[7], digits = 2)`, *p* = `r round(misgendering_freq_anova$p.value[9], digits = 3)`, 
-but not in non-binary men (*p* = `r round(misgendering_freq_anova$p.value[8], digits = 3)`).
-
-There were also multiple sigificant effects of identity endorsement on felt stigma when misgendered. 
-Cisgender, *F*(`r misgendering_stigma_anova$df[1]`, `r tail(misgendering_stigma_anova$df,1)`) = `r round(misgendering_stigma_anova$statistic[1], digits = 2)`, *p* < 0.001,
-and transgender , *F*(`r misgendering_stigma_anova$df[2]`, `r tail(misgendering_stigma_anova$df,1)`) = `r round(misgendering_stigma_anova$statistic[2], digits = 2)`, *p* < 0.001, identities demonstrated significant effects. 
-However, non-binary (*p* = `r round(misgendering_stigma_anova$p.value[3], digits = 2)`) identity did not show a significant effect. 
-Neither men (*p* = `r round(misgendering_stigma_anova$p.value[4], digits = 2)`) nor women (*p* = `r round(misgendering_stigma_anova$p.value[5], digits = 2)`) alone showed significant effects, nor did trans women (*p* = `r round(misgendering_stigma_anova$p.value[7], digits = 2)`). 
-However, trans men, *F*(`r misgendering_stigma_anova$df[6]`, `r tail(misgendering_stigma_anova$df,1)`) = `r round(misgendering_stigma_anova$statistic[6], digits = 2)`, *p* < 0.001, demonstrated a significant effect.
-Neither non-binary men (*p* = `r round(misgendering_stigma_anova$p.value[8], digits = 2)`) nor non-binary women (*p* = `r round(misgendering_stigma_anova$p.value[9], digits = 2)`) demonstrated a significant effect. 
-
-```{r misgendering_pronoun_anova, echo = FALSE}
-# run factorial anova on pronouns
-misgendering_pronoun_anova_raw <- mod_data %>%
-  aov(misgendering_freq ~ pronoun.he + pronoun.they + cis:pronoun.he + cis:pronoun.they, .)
-# tidy anova data
-misgendering_pronoun_anova <- misgendering_pronoun_anova_raw %>% tidy()
-# run and tidy tukey test
-misgendering_pronoun_tukey <- misgendering_pronoun_anova_raw %>%
-  TukeyHSD() %>%
-  tidy()
-```
-
-Unlike @mclemoreExperiencesMisgenderingIdentity2015, participant pronouns were also collected. This allowed us to perform a factorial ANOVA with a follow-up Tukey test to examine pronouns, independent of gender, had an effect on misgendering frequency. I will finish this paragraph later lol once i figure out if it's actually relevant or not lol.
+There was also a significant effect of gender, `r misgendering_stigma_anova$t[1]`, but not of pronouns, `r misgendering_stigma_anova$t[2]`, on felt stigma when misgendered. A post-hoc Tukey test revealed that cis men, `r misgendering_stigma_gender_desc$t[1]`, and cis women, `r misgendering_stigma_gender_desc$t[2]`, feel less stigmatized when misgendered than trans men, `r misgendering_stigma_gender_desc$t[3]`, trans women, `r misgendering_stigma_gender_desc$t[4]`, non-binary people, `r misgendering_stigma_gender_desc$t[6]`, and trans non-binary people, `r misgendering_stigma_gender_desc$t[7]`. Cis non-binary people, `r misgendering_stigma_gender_desc$t[5]`, also feel less stigmatized when misgendered than trans men, trans women, and trans non-binary people. Non-binary people also feel less stigmatized when misgendered than trans men and trans non-binary people. 
 
 
 ## Gender Congruence
@@ -289,18 +278,20 @@ cong_ttest <- mod_data %>%
   t_test(congruence ~ cis, order = c(FALSE, TRUE)) %>%
   mutate_if(is.numeric, round, digits = 2)
 # congruence anova
-cong_anova <- mod_data %>%
-  aov(congruence ~ gender_bin, .) %>%
-  tidy() %>%
-  mutate_if(is.numeric, round, digits = 2)
+cong_anova_raw <- mod_data %>%
+  aov(congruence ~ gender_bin, .)
+cong_anova <- cong_anova_raw %>% tidy() %>% anova_text()
+cong_tukey <- cong_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05)
+cong_gender_bin_desc <- mod_data%>%
+  filter(!is.na(congruence), !is.na(gender_bin)) %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(congruence), sd = sd(congruence)) %>%
+  desc_text()
 ```
 
 A single sample t-test revealed that non-cisgender participants (*M* = `r cong_desc$mean_cong[1]`, *SD* = `r cong_desc$sd_cong[1]`) scored lower on the TCS than cisgender participants (*M* = `r cong_desc$mean_cong[2]`, *SD* = `r cong_desc$sd_cong[2]`), *t*(`r cong_ttest$t_df`) = `r cong_ttest$statistic`, *p* < 0.001. 
 
-A factorial ANOVA demonstrated significant effects of cisgender, *F*(`r cong_anova$df[1]`, `r tail(cong_anova$df,1)`) = `r cong_anova$statistic[1]`, *p* < 0.001,
-and non-binary identification, *F*(`r cong_anova$df[3]`, `r tail(cong_anova$df,1)`) = `r cong_anova$statistic[3]`, *p* < 0.001, 
-but not of transgender identification (*p* = `r cong_anova$p.value[2]`). 
-There were also no significant effects in men (*p* = `r cong_anova$p.value[4]`), women (*p* = `r cong_anova$p.value[5]`), trans men (*p* = `r cong_anova$p.value[6]`), trans women (*p* = `r cong_anova$p.value[7]`), non-binary men (*p* = `r cong_anova$p.value[8]`), and non-binary women (*p* = `r cong_anova$p.value[9]`). 
+A one-way ANOVA demonstrated significant effects of gender on TCS scores, `r cong_anova$t[1]`. A post-hoc Tukey test revealed that cis men, `r cong_gender_bin_desc$t[1]`, and cis women, `r cong_gender_bin_desc$t[2]`, have significantly higher TCS scores than trans men, `r cong_gender_bin_desc$t[3]`, trans women, `r cong_gender_bin_desc$t[4]`, cis non-binary people, `r cong_gender_bin_desc$t[5]`, non-binary people, `r cong_gender_bin_desc$t[6]`, and trans non-binary people, `r cong_gender_bin_desc$t[7]`. 
 
 ```{r congruence_graph, echo = FALSE, warning=FALSE}
 cisman_cong <- mod_data %>%
@@ -619,7 +610,36 @@ Finally, on item 18 ("I feel like people understand me better when I share my pr
 
 ### Historical experience at Reed College
 <!-- includes items 19, 20, 21 -->
+```{r historical_experience,echo=FALSE}
+# check if profs share without filtering only common majors
+allmajors_profshare_anova <- mod_data %>%
+  aov(profs_share ~ gender_bin + major, .) %>%
+  tidy() %>%
+  anova_text()
+allmajors_studentsshare_anova <- mod_data %>%
+  aov(students_share ~ gender_bin + major, .) %>%
+  tidy() %>%
+  anova_text()
+# filter only common majors
+common_majors <- mod_data %>%
+  filter(!is.na(major)) %>%
+  group_by(major) %>%
+  tally() %>%
+  filter(n > 5) %>%
+  pull(major)
+# there is also a significant effect of age buuuuuuuuut no time! :-)
+commonmajors_profshare_anova_raw <- mod_data %>%
+  filter(major %in% common_majors) %>%
+  aov(profs_share ~ gender_bin + major, .)
+commonmajors_profshare_anova <- commonmajors_profshare_anova_raw %>% tidy() %>% anova_text()
+commonmajors_studentsshare_anova_raw <- mod_data %>%
+  filter(major %in% common_majors) %>%
+  aov(students_share ~ gender_bin + major, .)
+commonmajors_studentsshare_anova <- commonmajors_profshare_anova_raw %>% tidy() %>% anova_text()
+```
+Item 19 ("In classes at Reed, professors usually introduce themselves with their pronouns") asked students to report how frequently professors introduced themselves with their pronouns. A one-way ANOVA did not find a significant effect of gender, `r allmajors_profshare_anova$t[1]`, or major, `r allmajors_profshare_anova$t[2]`, on reported frequency of professors sharing their pronouns. However, when we only compared majors in which we had more than 5 students in, there were significant effects of both gender, `r commonmajors_profshare_anova$t[1]`, and major, `r commonmajors_profshare_anova$t[2]`. 
 
+Item 20 ("In classes at Reed, students usually introduce themselves with their pronouns") asked students to report how often their peers introduced themselves with their pronouns. A one-way ANOVA revaled a significant effect of gender, `r allmajors_studentsshare_anova$t[1]`, but not major. When we only compared majors that we had more than 5 students in, there were significant effects of gender, `r commonmajors_studentsshare_anova$t[1]`, and major, `r commonmajors_studentsshare_anova$t[2]`.
 
 ### Primary Component Analysis
 ```{r pca, echo = FALSE}
@@ -687,15 +707,16 @@ color_tile2 <- function (...) {
           `background-color` = csscolor(matrix(as.integer(colorRamp(...)(normalize(as.numeric(x)))), 
                                                byrow=TRUE, dimnames=list(c("red","green","blue"), NULL), nrow=3)))
   })}
+# uncomment lines to have color coded cells based on factor loading
 loadings %>%
-  mutate(
-    `1` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`1`),
-    `2` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`2`),
-    `3` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`3`)
-  ) %>%
+#  mutate(
+#    `1` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`1`),
+#    `2` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`2`),
+#    `3` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`3`)
+#  ) %>%
   kable(
-    "html",
-    escape = FALSE,
+#    "html",
+#    escape = FALSE,
     col.names = c("Item", "Comp. 1", "Comp. 2", "Comp. 3")
   )
 ```
