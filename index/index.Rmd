@@ -18,7 +18,7 @@ output:
 # use code similar to line 22-23 for the .RMD files. If you are NOT producing a PDF, you can delete or silence lines 21-32 in this YAML header.
 
 # Specify the location of the bibliography below
-bibliography: references.bib
+bibliography: bib/thesis.bib
 # Download your specific csl file and refer to it in the line below.
 csl: csl/apa.csl
 lot: true
