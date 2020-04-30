@@ -24,8 +24,11 @@ csl: csl/apa.csl
 lot: true
 lof: true
 # If you prefer blank lines between paragraphs, un-silence lines  40-41 (this requires package tikz)
-#header-includes:
-#- \usepackage{tikz}
+# header-includes:
+#   - \usepackage{float}
+#   - \floatplacement{figure}{H}
+#   - \usepackage{flafter}
+#   - \usepackage{tikz}
 ---
 
 <!--

@@ -242,6 +242,19 @@ bin_genders <- function(data) {
     ))
 }
 
+mend_demo <- function(data) {
+  data %>%
+    mutate(Q20_6_TEXT = as.character(Q20_6_TEXT)) %>%
+    mutate(ethnicity = case_when(
+      str_detect(tolower(Q20_6_TEXT), "(hispanic|latino|latinx)") ~ "Latino",
+      TRUE ~ ethnicity
+    )) %>%
+    mutate(ethnicity = case_when(
+      str_detect(ethnicity, ",") ~ "Mixed Race or Ethnicity",
+      TRUE ~ ethnicity
+    ))
+}
+
 all_resp_mod_data <- survey_dat %>%
   filter(Finished == TRUE) %>%
   recode_likert() %>%
@@ -249,6 +262,7 @@ all_resp_mod_data <- survey_dat %>%
   rename_data() %>%
   recode_data() %>%
   calc_scores() %>%
+  mend_demo()  %>%
   select_cols() %>%
   process_qual() %>%
   bin_genders()
@@ -267,7 +281,6 @@ total_complete_responses <- survey_dat %>%
 total_nonundergrad <- all_resp_mod_data %>%
   filter(year == "Other") %>%
   nrow()
-
 
 
 # mod_data %>%
