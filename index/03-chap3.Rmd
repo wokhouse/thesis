@@ -339,6 +339,15 @@ mod_data %>%
   stat_compare_means(label = "p.signif", ref.group = "Cis Man")
 ```
 
+```{r congruence_extended_anova,echo=F}
+congruence_extended_anova_raw <- mod_data %>% 
+  aov(congruence ~ misgendering_stigma + misgendering_freq + misgendering_stigma:misgendering_freq, .) 
+congruence_extended_anova <- congruence_extended_anova_raw %>% 
+  tidy() %>% 
+  anova_text()
+```
+A possible correlation between congruence and misgendering frequency was explored. A factorial ANOVA revealed that correlation had a significant effect on misgendering frequency, `r congruence_extended_anova$t[2]` and felt stigma when misgendered, `r congruence_extended_anova$t[1]`, but not frequency and stigma together, `r congruence_extended_anova$t[3]`. 
+
 ## Transgender Inclusive Behaviors
 
 ```{r inclusive_results, echo = FALSE, include = FALSE}
@@ -585,16 +594,18 @@ On item 13 ("I feel that the gender that people perceive me as and my pronouns a
 item14_data <- mod_data %>%
   select(
     gender_bin,
+    pronoun_bin,
     gender_pronouns_consistent
   ) %>%
   filter(complete.cases(.))
 item14_anova_raw <- item14_data %>%
-  aov(gender_pronouns_consistent ~ gender_bin, .)
+  aov(gender_pronouns_consistent ~ gender_bin + pronoun_bin, .)
 item14_anova <- item14_anova_raw %>% tidy() %>% anova_text()
 item14_tukey <- item14_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05) 
 item14_desc <- item14_data %>% group_by(gender_bin) %>% summarise(mean = mean(gender_pronouns_consistent), sd = sd(gender_pronouns_consistent)) %>% desc_text()
+item14_pronoun_desc <- item14_data %>% group_by(pronoun_bin) %>% summarise(mean = mean(gender_pronouns_consistent), sd = sd(gender_pronouns_consistent)) %>% desc_text()
 ```
-On item 14 ("I feel that my internal gender identity and pronouns are consistent with one another."), there was a significant effect of gender, `r item14_anova$t[1]`. A post-hoc Tukey test found that cis men, `r item14_desc$t[1]`, and cis women, `r item14_desc$t[2]`, reported higher consistency than cis non-binary people, `r item14_desc$t[5]`, non-binary people, `r item14_desc$t[6]`, and trans non-binary people, `r item14_desc$t[7]`. Trans men, `r item14_desc$t[3]`, also reported higher consistency than cis non-binary people and non-binary people. Trans non-binary people also reported higher consistency than non-binary people. There were no other significant differences between groups. 
+On item 14 ("I feel that my internal gender identity and pronouns are consistent with one another."), there was a significant effect of gender, `r item14_anova$t[1]` and pronouns, `r item14_anova$t[2]`. A post-hoc Tukey test found that cis men, `r item14_desc$t[1]`, and cis women, `r item14_desc$t[2]`, reported higher consistency than cis non-binary people, `r item14_desc$t[5]`, non-binary people, `r item14_desc$t[6]`, and trans non-binary people, `r item14_desc$t[7]`. Trans men, `r item14_desc$t[3]`, also reported higher consistency than cis non-binary people and non-binary people. Trans non-binary people also reported higher consistency than non-binary people. People who use they/them and she/her pronouns, `r item14_pronoun_desc$t[6]`, reported higher consistency than people who just used they/them pronouns, `r item14_pronoun_desc$t[7]`. There were no other significant differences between groups. 
 
 ```{r item15, echo = FALSE}
 item15_data <- mod_data %>%
