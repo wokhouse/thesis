@@ -18,6 +18,7 @@ library(ggsci)
 library(factoextra)
 library(diptest)
 library(agricolae)
+library(pander)
 source(here("index", "analysis", "qualtrics.R"))
 ```
 ```{r helper_functions, include = FALSE}
@@ -82,7 +83,9 @@ mod_data %>%
   arrange(-n) %>%
   kable(
     col.names = c("Gender Bin", "N"),
-    caption = "Artificial gender bins created for the purpose of analysis."
+    caption = "Artificial gender bins created for the purpose of analysis.",
+    longtable = TRUE,
+    booktabs = TRUE
   )
 ```
 
@@ -110,7 +113,9 @@ mod_data %>%
   arrange(n * -1) %>%
   kable(
     col.names = c("Pronouns", "N"),
-    caption = "Participant pronouns"
+    caption = "Participant pronouns",
+    longtable = TRUE,
+    booktabs = TRUE
   )
 ```
 
@@ -139,7 +144,9 @@ mod_data %>%
   select(label, n) %>%
   kable(
     col.names = c("Sexuality", "N"),
-    caption = "Participant sexuality"
+    caption = "Participant sexuality",
+    longtable = TRUE,
+    booktabs = TRUE
   )
 ```
 Additionally, `r demi_n` particiapnts described their sexuality as demisexual, `r poly_n` as polyamourous, and `r enbian_n` as enbian. Some terms, such as "gynophile," were coded as "straight" or "queer" depending on the particiant's gender. 
@@ -222,7 +229,9 @@ cbind(misgendering_freq_noncis, misgendering_freq_cis) %>%
               funs(recode(., "5" = "Always", "4" = "Often", "3" = "Sometimes", "2" = "Rarely", "1" = "Never"))) %>%
 kable(
   col.names = c("“How often do people ‘misgender’ you?”", "Non-cisgender (%)", "Cisgender (%)"),
-  caption = "Misgendering frequency for non-cisgender and cisgender participants"
+  caption = "Misgendering frequency for non-cisgender and cisgender participants",
+  longtable = TRUE,
+  booktabs = TRUE
   )
 ```
 
@@ -233,7 +242,9 @@ cbind(misgendering_stigma_noncis, misgendering_stigma_cis) %>%
               funs(recode(., "5" = "Very", "4" = "Considerably", "3" = "Somewhat", "2" = "Slightly", "1" = "Not at all"))) %>%
 kable(
   col.names = c("“I feel stigmatized (...) when I am misgendered.”", "Non-cisgender (%)", "Cisgender (%)"),
-  caption = "Felt stigma when misgendered for non-cisgender and cisgender participants"
+  caption = "Felt stigma when misgendered for non-cisgender and cisgender participants",
+  longtable = TRUE,
+  booktabs = TRUE
   )
 ```
 
@@ -756,29 +767,13 @@ eigenvals <- get_eigenvalue(pca_out) %>% mutate_if(is.numeric, round, digits = 2
 ```
 Principal component analysis (PCA) was used on the pronoun and misgendering data. Using a Screen plot, we retained three components with an eigenvalue of `r eigenvals$eigenvalue[3]`, accounting for `r eigenvals$cumulative.variance.percent[3]`% of the variance.
 
-```{r, echo = FALSE}
-# color tile function that can take more than one color, since we want very positive and very negative values to be highlighted, but not
-# intermediate values
-color_tile2 <- function (...) {
-  formatter("span", style = function(x) {
-    style(display = "block",
-          padding = "0 4px", 
-          `border-radius` = "4px", 
-          `background-color` = csscolor(matrix(as.integer(colorRamp(...)(normalize(as.numeric(x)))), 
-                                               byrow=TRUE, dimnames=list(c("red","green","blue"), NULL), nrow=3)))
-  })}
+```{r pca_loadings, echo = FALSE, results="asis", fig.cap="PCA Component Loadings"}
 # uncomment lines to have color coded cells based on factor loading
 loadings %>%
-#  mutate(
-#    `1` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`1`),
-#    `2` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`2`),
-#    `3` = color_tile2(c("gray", "white", "white", "white", "lightgray", "gray"))(`3`)
-#  ) %>%
   kable(
-#    "html",
-#    escape = FALSE,
-    col.names = c("Item", "Comp. 1", "Comp. 2", "Comp. 3"),
-    caption = "PCA Component Loadings"
+    col.names = c("Item", "Comp. 1", "Comp. 2", "Comp. 3"),     
+    longtable = TRUE,
+    booktabs = TRUE
   )
 ```
 
@@ -855,7 +850,7 @@ comp1_desc <- pca_comp1_out %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
 ```
-```{r, echo = FALSE, fig.widht = 6.5, fig.height= 9, cache = TRUE, fig.cap = "PCA Components 1 & 2 by Gender"}
+```{r pca_comp_1_2, echo = FALSE, fig.height= 9, cache = TRUE, fig.cap = "PCA Components 1 & 2 by Gender"}
 pca_component_var <- tidy(pca_out, "pcs") %>% mutate_if(is.numeric, round, digits = 3) %>% mutate(t = paste("(", percent * 100, "%)", sep = ""))
 # graph of components 1 and 2, all genders
 pca_vis_all <- pca_out %>%
@@ -1008,7 +1003,7 @@ comp2_desc <- pca_comp2_out %>%
 ```
 Another one-way ANOVA demonstrated a significant effect of gender on the second component, `r comp2_anova$t[1]`. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, are less willing to share their pronouns than cisgender women, `r comp1_desc$t[2]` trans men, `r comp1_desc$t[3]`, and non-binary people, `r comp1_desc$t[6]`. Non-binary people are also more willing to share their pronouns than transgender women, `r comp1_desc$t[4]`. 
 
-```{r, echo = FALSE, fig.widht = 6, fig.height= 9, fig.cap = "PCA Components 1 & 3 by Gender"}
+```{r, echo = FALSE, fig.height= 9, fig.cap = "PCA Components 1 & 3 by Gender"}
 comp3_fill_data <- pca_all %>%
   mutate(match = factor(case_when(
     gender_bin == "Cis Man" ~ "Cis Man",
