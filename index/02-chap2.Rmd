@@ -2,6 +2,7 @@
 
 ```{r methods_init, include=FALSE}
 library(knitr)
+library(kableExtra)
 library(tidyverse)
 source('analysis/qualtrics.R')
 ```
@@ -47,7 +48,8 @@ data.frame(question = c(
   kable(
     col.names = c("Item Description"),
     caption = "Pronoun attitude questionnaire items: past 2 weeks"
-  )
+  ) %>%
+  column_spec(1, width = "35em")
 ```
 In the second block of questions, participants were asked to reflect on their experience across their entire time at Reed. These questions drew on participants extended experience at the college and reflection on each semester. 
 ```{r, echo = FALSE}
@@ -59,7 +61,8 @@ data.frame(question = c(
   kable(
     col.names = c("Item Description"),
     caption = "Pronoun attitude questionnaire items: entire time at Reed"
-  )
+  ) %>%
+  column_spec(1, width = "35em")
 ```
 
 ### Transgender Inclusive Behavior Scale (TIBS)

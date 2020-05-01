@@ -1,16 +1,5 @@
 # Discussion
 
-## Experiences with Misgendering
-@mclemoreExperiencesMisgenderingIdentity2015 examined differences in misgendering frequency and felt stigma when misgendered in a non-cisgender population. We extended their study by administering their items to cis participants as well. We found robust differences between cis people and non-cis people in both misgendering frequency and felt stigma. This shows that non-cis people have a significantly worse experience with pronouns—they get misgendered more frequently and feel more stigmatized when misgendered. 
-
-We also extended @mclemoreExperiencesMisgenderingIdentity2015 by including between-gender and between-pronoun comparisons. Interestingly, non-binary people reported feeling less stigmatized when misgendered than trans men and trans non-binary people. We found that gender congruence, as measured by the TCS, had significant effects on misgendering frequency as well as felt stigma. The author speculates that individuals who intentionally identify as transgender may care more about being gendered correctly. However, further study is needed to examine the feelings misgendering invokes. 
-
-It should also be noted that people who use only they/them pronouns reported being misgendered more than everyone else. Significant work needs to be done to normalize they/them pronouns, independent of gender presentation and appearance. 
-
-## Gender Congruence
-
-## Transgender Inclusive Behaviors
-
 ## Gender Identity
 
 Gender identity is frequently assumed to be a binary or trinary, i.e. men, women, and—perhaps—non-binary people. In the present study, we created seven artificial gender groups based on answers to a series of questions that disaggregated gender identity (e.g. woman, agender, non-binary) and mode of relating to gender identity (e.g. cis, trans, non-binary). These groups are artificial in the sense that they do not fully convey any one participant's gender and were formed from participants' responses to questions about whether they identified as cisgender, transgender, and non-binary, and whether they wrote that they were a man or woman in the write-in gender field. 
@@ -37,4 +26,40 @@ Knowing an individual's gender identity or pronouns does not reveal what the oth
 
 There was also variation in the order of the pronouns. For example, some participants who use they/them and she/her pronouns wrote "they/she," and others wrote "she/they." The order of pronouns was not analyzed in the present study. However, as the author has used many pronouns in her life, she knows that order may reflect any number of reasons, including preference or contextual usage. Some participants wrote elaborately about their complicated relationship with pronouns in the write-in field. This is to say that, for many people, relationships with pronouns extends beyond a simple statement of "they/them" or "he/him," and may vary with closeness, context, or feelings. 
 
-## Transmisogyny/Trans-Woman Specific Issues
+## Experiences with Misgendering
+
+@mclemoreExperiencesMisgenderingIdentity2015 examined differences in misgendering frequency and felt stigma when misgendered in a non-cisgender population. We extended their study by administering their items to cis participants as well. We found robust differences between cis people and non-cis people in both misgendering frequency and felt stigma. This shows that trans and non-binary people have a significantly worse experience with pronouns—they get misgendered more frequently and feel more stigmatized when misgendered. 
+
+We also extended @mclemoreExperiencesMisgenderingIdentity2015 by including between-gender and between-pronoun comparisons. Interestingly, non-binary people reported feeling less stigmatized when misgendered than trans men and trans non-binary people. We found that gender congruence, as measured by the TCS, had significant effects on misgendering frequency as well as felt stigma. The author speculates that individuals who intentionally identify as transgender may care more about being gendered correctly. However, further study is needed to examine the feelings misgendering invokes. 
+
+It should also be noted that people who use only they/them pronouns reported being misgendered more than everyone else. Significant work needs to be done to normalize they/them pronouns, independent of gender presentation and appearance. 
+
+## Gender Congruence
+
+@kozeeMeasuringTransgenderIndividuals2012 developed the TCS to provide a measure of gender congruence for transgender people. However, we administered the TCS to cisgender people as well. We found that cis men and women experience significantly higher gender congruence than trans and non-binary people. While this isn't surprising, it's impressive that the results are so clear-cut.
+
+## Transgender Inclusive Behaviors
+
+@kattariDevelopmentValidationTransgender2018 developed the TIBS to provide a measure of how many trans-inclusive behaviors people do. The TIBS was developed for people of all genders. We found that cis men set a low bar—they perform significantly fewer trans-inclusive behaviors than every other gender group. Interestingly, cis women perform significantly more trans-inclusive behaviors than cis men. This may be due to social forces such as misogyny forcing cis women to be more aware of issues that affect trans people, or the absence of misogyny and transphobia allowing cis men to ignore issues that affect trans people. 
+
+## Primary Component Analysis
+
+Use of PCA allowed us to reduce responses to all of the pronoun-related questions to three main components. As previously discussed, the first component loadings indicated that it captured consistency between others’ perception of one’s gender, others’ assumptions about gender and pronouns, misgendering, and comfort when with people with similar genders. This can be interpreted to represent how strongly one is affected by cisnormativity.
+
+Examining the variation between gender groups within the first component yields some interesting results. Firstly, as previously discussed, the distribution of individuals is likely bimodal. We can interpret this as experiences with cisnormativity falling into two groups. One could reasonably label these as cisgender and transgender. Even non-binary individuals who did not say that they were transgender fall much further to the transgender side, however we can see from the Tukey test that they are not as affected as the trans non-binary group. These data concretely show that non-cisgender people broadly have a very different experience navigating the world as their gender. This doesn't just manifest as different access to spaces, but as a different awareness around how their body and gender presentation is being perceived and evaluated by other people. Cis people may be entirely unaware of certain common assumptions people make about their gender and body, whereas trans and non-binary people may be acutely aware of them. 
+
+Loadings from the second component indicated that it captured one’s desire to share one’s pronouns in various settings and well as how comfortable one feels doing so. Thus, the second component can be interpreted as one's readiness to share their pronouns. 
+
+Examine the variation between gender groups within the second component indicates that readiness to share one's pronouns may not be mediated by one single variable. 
+
+Loadings from the third component indicated that it captured concern that sharing one’s pronouns will draw unwanted attention, as well as when others—not necessarily of the same gender—share their pronouns first and how consistent and representative one’s pronouns are with one’s gender. Thus, the third component can be interpreted as concern around sharing pronouns and fears of judgment or lack of understanding about one’s pronouns.
+
+<!-- ## Transmisogyny/Trans-Woman Specific Issues -->
+
+## Limitations
+
+Due to the global pandemic that occurred in early 2020, available time for data collection and analysis was limited. However, there are several shortcomings in this study. Firstly, most of the analysis was limited to gender and pronoun effects. While important, gender identity does not exist alone. Gender identity exists in crossroads with countless other identities. @millerThisReallyInteresting2019 provide an account of how queerness and disability intersect in university students. Analysis of this dataset could be extended to examine effects of age, ethnicity, and major. 
+
+Furthermore, to expedite analysis, gender groups were created. While this yielded some interesting and novel results, closer analysis could be done by using the many gender-related variables. For example, while we were able to compare cis and trans men, use of the gender groups prevented us from examining if manhood itself exerted any effects. While this would complicate the analysis required, we have the privilege of a large amount of very high-resolution data gender-related data. It would be a shame to not fully utilize it. 
+
+Additionally, it must be acknowledged that the scope of this study is limited to undergraduates from Reed College. This is a *very specific population* and likely does not generalize well to other populations. While this study may prove useful in guiding other research on pronouns and gives us a unique opportunity to make institution-specific recommendations, these items should be re-assessed and administered to a more diverse population in age, ethnicity, socio-economic class, and education, to name a few. 
