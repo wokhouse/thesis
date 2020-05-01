@@ -47,7 +47,9 @@ data.frame(question = c(
   )) %>%
   kable(
     col.names = c("Item Description"),
-    caption = "Pronoun attitude questionnaire items: past 2 weeks"
+    caption = "Pronoun attitude questionnaire items: past 2 weeks",
+    longtable = TRUE,
+    booktabs = TRUE
   ) %>%
   column_spec(1, width = "35em")
 ```
@@ -60,7 +62,9 @@ data.frame(question = c(
   )) %>%
   kable(
     col.names = c("Item Description"),
-    caption = "Pronoun attitude questionnaire items: entire time at Reed"
+    caption = "Pronoun attitude questionnaire items: entire time at Reed",
+    longtable = TRUE,
+    booktabs = TRUE
   ) %>%
   column_spec(1, width = "35em")
 ```
