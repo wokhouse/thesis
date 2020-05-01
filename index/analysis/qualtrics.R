@@ -63,6 +63,7 @@ rename_data <- function(data) {
     rename(age = Q21) %>%
     rename(pronouns = `Q3 - Topics`) %>%
     rename(gender = `Q2 - Topics`) %>%
+    rename(gender_raw = Q2) %>%
     rename(sexuality = `Q19 - Topics`) %>%
     rename(major = `Q8 - Topics`) %>%
     rename(year = Q7) %>%
@@ -134,6 +135,7 @@ select_cols <- function(data) {
       ethnicity,
       pronouns,
       gender,
+      gender_raw,
       sexuality,
       major,
       year,
