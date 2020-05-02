@@ -16,7 +16,27 @@ output:
 #  thesisdown::thesis_epub: default
 # If you are creating a PDF you'll need to write your preliminary content (e.g., abstract, acknowledgements) here or
 # use code similar to line 22-23 for the .RMD files. If you are NOT producing a PDF, you can delete or silence lines 21-32 in this YAML header.
+abstract: |
+  `r if(knitr:::is_latex_output()) paste(readLines("00-abstract.Rmd"), collapse = '\n  ')`
+# If you'd rather include the preliminary content in files instead of inline
+# like below, use a command like that for the abstract above.  Note that a tab is 
+# needed on the line after the `|`.
+acknowledgements: |
+  Firstly, I would like to thank my adviser, Vasily, for his patience and support as I changed the scope of my thesis over and over, well into February. 
 
+  Secondly, I would like to thank my roommate and best friend Isaac for revealing to me the true, nefarious purpose of homosexuality, which I am now sworn to take to the grave without telling another soul. Also thanks for cooking me dinner almost every day for that two week period where I didn't go to class and just worked on my thesis and talked about girls. Despite your height, you are the truly the best fag a dyke could ask for. 
+  
+  Also, thank you to my pal of pals, Lou, who, regardless of the pronouns I was in to, was always one to banter in a variety of diverse accents and codes for four straight years! Four years! Alright! Cheerio! 
+  
+  Thank you to Riley who accompanied me in IRL life, and then via FaceTime as the pandemic fell over Oregon, into my descent into madness as I began realizing that, while the semester was ending, the completion thesis was not. You're very pretty and funny, even for a tranny. See you tomorrow. 
+  
+  Thank you KDFC, for continuously entertaining me from 8:30am-ish to 10-10:30-ish every day for the past four years. I have but one small suggestion: please replace the Classical Commuter Quiz and the Musical Blind Date with additional segments of Mozart in the Morning, they are not necessary and Mozart is better. Thanks.
+  
+  And most importantly, to Tuesday, as in the day of the week. You were always there for me. Truly you make the natiform indent in meaning that falls between Monday and Wednesday. Thanks, Tuesday.
+  
+dedication: |
+  I would like to dedicate this thesis to my mother, whose continuous support in every part of my life has made this thesis and so much more possible. I love you, mom. 
+  
 # Specify the location of the bibliography below
 bibliography: bib/thesis.bib
 # Download your specific csl file and refer to it in the line below.
@@ -68,7 +88,7 @@ on chapters.
 
 # Introduction {.unnumbered}
 
-Pronouns are small words used to replace nouns in sentences [@Pronoun2020]. Gendered pronouns, in English, are third person pronouns that match the gender of the referent. The most common third person pronouns in English are "he," "she," and "they." "They" is commonly and widely recognized as a plural *and* singular pronoun [@They2019]. In the context of gender, pronouns are commonly notated as he/him, she/her, and they/them. 
+Pronouns are small words used to replace nouns in sentences [@Pronoun2020]. Gendered pronouns, in English, are third person pronouns that match the gender of the referent. The most common third person pronouns in English are "he," "she," and "they." "They" is commonly and widely recognized as a plural *and* singular pronoun [@They2019]. In the co ntext of gender, pronouns are commonly notated as he/him, she/her, and they/them. 
 
 Trans people choose new names and/or pronouns that better reflect their gender identity. Use of chosen name and pronouns is associated with improved mental health [@russellChosenNameUse2018], whereas refusing to use chosen name (commonly known as deadnaming) or pronouns (misgendering) is associated with lower affect [@mclemoreExperiencesMisgenderingIdentity2015] and mental health outcomes [@russellChosenNameUse2018]. 
 
