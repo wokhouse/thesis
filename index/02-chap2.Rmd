@@ -17,7 +17,7 @@ Participants of all genders were recruited, including cisgender participants. @t
 
 ## Survey
 
-Participants participated online through Qualtrics. The survey was advertised as taking 5-10 minutes. Participants agreed to a consent page, then answered questions about their relationship with pronouns and gender, then questions about misgendering frequency [@mclemoreExperiencesMisgenderingIdentity2015], then the Transgender Inclusive Behavior Scale [@kattariDevelopmentValidationTransgender2018], then the Transgender Congruence Scale [@kozeeMeasuringTransgenderIndividuals2012], and the finally questions about their demographics. 
+Participants participated online through Qualtrics. The survey was advertised as taking 5-10 minutes. Participants agreed to a consent page, then answered questions about their relationship with pronouns and gender, then questions about misgendering frequency [@mclemoreExperiencesMisgenderingIdentity2015], then the Transgender Inclusive Behavior Scale [@kattariDevelopmentValidationTransgender2018], then the Transgender Congruence Scale [@kozeeMeasuringTransgenderIndividuals2012], and finally, questions about their demographics. 
 
 ### Gendered Pronoun Attitude Survey (GPAS)
 

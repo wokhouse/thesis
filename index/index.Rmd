@@ -22,13 +22,39 @@ abstract: |
 # like below, use a command like that for the abstract above.  Note that a tab is 
 # needed on the line after the `|`.
 acknowledgements: |
-  Firstly, I would like to thank my adviser, Vasily, for his patience and support as I changed the scope of my thesis over and over, well into February. 
+  First and foremost, I would like to thank my adviser, Vasily, for his patience and continuous support as I changed the scope of my thesis over and over, well into February. Also go us for getting the biggest sample size in a thesis, maybe ever?
 
-  Secondly, I would like to thank my roommate and best friend Isaac for revealing to me the true, nefarious purpose of homosexuality, which I am now sworn to take to the grave without telling another soul. Also thanks for cooking me dinner almost every day for that two week period where I didn't go to class and just worked on my thesis and talked about girls. Despite your height, you are the truly the best fag a dyke could ask for. 
+  Additionally, thank you to Greg for helping me figure out how to use magic i.e. use PCA, which I think most people will probably end up thinking is magic but whatever. It's just an undergraduate thesis. Sorry that I stopped coming to class but still came to your office hour for thesis help haha.
   
-  Also, thank you to my pal of pals, Lou, who, regardless of the pronouns I was in to, was always one to banter in a variety of diverse accents and codes for four straight years! Four years! Alright! Cheerio! 
+  I would also like to thank my roommate and best friend Isaac for revealing to me the true, nefarious purpose of homosexuality, which I am now sworn to take to the grave without telling another soul. Also thanks for cooking me dinner almost every day for that two week period where I didn't go to class and just worked on my thesis and talked about girls. You are the truly the best fag a dyke could ask for. 
   
-  Thank you to Riley who accompanied me in IRL life, and then via FaceTime as the pandemic fell over Oregon, into my descent into madness as I began realizing that, while the semester was ending, the completion thesis was not. You're very pretty and funny, even for a tranny. See you tomorrow. 
+  Also, thank you to my pal of pals and thesis desk partner Lou, who, regardless of the pronouns I was in to, was always by side and down to banter in a variety of accents and codes for four straight years! Four years! Alright! Cheerio! 
+  
+  Thank you to Riley who accompanied me in IRL life, and then via FaceTime as the pandemic fell over Oregon, in my descent into madness as I began realizing that, while the semester was ending, the completion thesis was not. You're quite funny *very* pretty, *even* for a tranny. See you tomorrow. 
+  
+  Thank you to Jay who transitioned from cycling buddy to R Markdown buddy as you graduated and I started thesis. Hopefully we can detransition soon. 
+  
+  Thank you to all of my dear gender-diverse feminists: Io, Schuster, Nell, and Zoe. While I don't think we actually settled on a definition of "gender diverse," I'm glad that we were able to exercise that term enough for me to feel confident using it in my thesis title and never define it in the text. 
+  
+  Thank you to Paulina, whose overflowing passion for fancy liquids and weird modern classical music knows no geographical bounds i.e. not Oregon i.e. Chicago. Let's do that again sometime. 
+  
+  Thank you to Vivek, whose camradery in high quality music and appreciation for Paul was a continuous sorce of joy over the years. It's a shame you chose the worse major—neuroscience—so we'll never truly be on equal footing, but I see you and I appreciate you. Also thanks for your short-lived TA role with Beef Tip helping us teach Ophelia to press the lever on her *other* right. 
+  
+  Thank you to Saxton, who *also* sat with me on the lawn as the world switched up it vibes. Because I got an extension on my thesis, I have the privlege of ripping your acknowledgement text for mine. 
+  
+  Thank you to Saga who entertained bit after bit in the PARC when they really had no choice because they were at work. Also thank you for finally revealing the author's rhetorical purpose in your thesis. While I don't personally grasp what "g*y s*x" means, I trust you and the personal significance it holds for you. 
+  
+  Thank you to my dear Reed College dolls: Mia, Beatrice, and Winn. How very feminist of us to queer higher-ed and our small liberal arts college in the Portland Northwest by transitioning while studying. Stunning. 
+  
+  Thank you to the REED COLLEGE LOW BRASS SECTION! We really brought that Reed College sound for FOUR YEARS in a row! Don't you all remember four years ago? With Yuan? Anyone? Thank you to all of the Low Brass underclassmen, Henry, Jon, and Gloria, who bought Ryen and I pizza seemingly every night this semester until the 2019–20 coronavirus pandemic put a halt to all of that. 
+  
+  Thank you to Kristin, whose continuous encouragement, support, and interest in my work in and out of the mLab pushed me to new levels. 
+  
+  Thank you to Dr. Kelly "Preisdent of Solid Air" Chacón PhD Esq., whose, frankly, *rediculous* tollerance of my bits blossomed into a wonderful friendship. In your own words, I now know neither physics nor chemistry. But, I have a friend. Additionally, thank you to Luke and Pax for your impressive and continuous commitment to the bit. Also hi Alex!
+  
+  Thank you also to everyone who attended the Tuesday Transgender injection Zoom meeting, including Benjamin, Shaan, Iris, Maddox, Beq, Winn, and August. How cool of us to be transgender in the time of COVID.
+  
+  Thank you to the many people who sent me kind words of encouragement when I was frustrated that the pronouns just weren't adding up. There are too many of you to thank, but I appreciate all of you and you help lift this thesis to what it is today. 
   
   Thank you KDFC, for continuously entertaining me from 8:30am-ish to 10-10:30-ish every day for the past four years. I have but one small suggestion: please replace the Classical Commuter Quiz and the Musical Blind Date with additional segments of Mozart in the Morning, they are not necessary and Mozart is better. Thanks.
   
@@ -88,9 +114,9 @@ on chapters.
 
 # Introduction {.unnumbered}
 
-Pronouns are small words used to replace nouns in sentences [@Pronoun2020]. Gendered pronouns, in English, are third person pronouns that match the gender of the referent. The most common third person pronouns in English are "he," "she," and "they." "They" is commonly and widely recognized as a plural *and* singular pronoun [@They2019]. In the co ntext of gender, pronouns are commonly notated as he/him, she/her, and they/them. 
+Pronouns are small words used to replace nouns in sentences [@Pronoun2020]. Gendered pronouns, in English, are third person pronouns that match the gender of the referent. The most common third person pronouns in English are "he," "she," and "they." "They" is commonly and widely recognized as a plural *and* singular pronoun [@They2019]. In the context of gender, pronouns are commonly notated as he/him, she/her, and they/them. 
 
-Trans people choose new names and/or pronouns that better reflect their gender identity. Use of chosen name and pronouns is associated with improved mental health [@russellChosenNameUse2018], whereas refusing to use chosen name (commonly known as deadnaming) or pronouns (misgendering) is associated with lower affect [@mclemoreExperiencesMisgenderingIdentity2015] and mental health outcomes [@russellChosenNameUse2018]. 
+Trans people choose new names and/or pronouns that better reflect their gender identity. Use of chosen name and pronouns is associated with improved mental health [@russellChosenNameUse2018], whereas refusing to use chosen name (commonly known as deadnaming) or pronouns (misgendering) is associated with lower affect [e.g. anxiety, depression, @mclemoreExperiencesMisgenderingIdentity2015] and mental health outcomes [@russellChosenNameUse2018]. 
 
 However, beyond mental health outcomes and general acknowledgment of importance, relationships with pronouns have not yet been closely examined. In this study, we develop and administer a survey measuring congruence and comfort with pronouns. We also bring in existing measures of gender congruence and trans inclusive behaviors. This allows us to compare pronoun congruence with other aspects of gender congruence and attitudes and comfort with sharing pronouns to how intentionally one supports transgender people.
 
@@ -102,8 +128,8 @@ Firstly, the author believes that gender is infinitely multifaceted, and, import
 
 Thus, research that treated gender as a binary was excluded. This includes measures such as the Utrecht Gender Dysphoria Scale [@schneiderMeasuringGenderDysphoria2016], which, while important as a start into giving clinicians tools to care for trans individuals, still treats gender as fundamentally linked to genitals and sex characteristics that can be neatly divided into a binary. This scale fundamentally fails non-binary patients and patients who may feel euphoric about certain aspects of their body and gender, but not others. 
 
-This is, of course, an imperfect effort. Limitations in language used to discuss gender may still presuppose a gender binary. For example, the term "non-binary" can be used to describe anyone who's gender does not fit into the categories of "man" and "woman" [@richardsNonbinaryGenderqueerGenders2016]. However, the term exists in opposition to "binary," thereby presupposing the existence of "binary" gender categories. The term "non-binary" is critical to this study. However, the author has made a deliberate effort to *not* treat "binary" as a coherent class of gendered experience. 
+This is, of course, an imperfect effort. Limitations in language used to discuss gender may still presuppose a gender binary. For example, the term "non-binary" can be used to describe anyone whose gender does not fit into the categories of "man" and "woman" [@richardsNonbinaryGenderqueerGenders2016]. However, the term exists in opposition to "binary," thereby presupposing the existence of "binary" gender categories. The term "non-binary" is critical to this study. However, the author has made a deliberate effort to *not* treat "binary" as a coherent class of gendered experience. 
 
 Secondly, the author believes that gender identity is entirely separate from sex assigned at birth. While it's true that cisgender people may have a hard time believing this, as their experience of gender has been entirely or mostly congruent with the sex they were assigned at birth [@hollebAZGenderSexuality2019], for trans and non-binary people, this narrative can be casually harmful at best, to deeply violent at worst. Sex and gender assigned at birth was intentionally excluded from this study, as the author believes that present gender identity should be the sole focus in studies of gender identity and gendered social experiences. 
 
-Finally, the author believes that there are no fundamental differences between cisgender men and women and transgender men and women. That is, there is nothing "essential" that cisgender people possess and know about their gender that transgender people fundamentally cannot also know or experience. Even arguments that center reproductive organs or certain bodily functions break down when sex is framed as construct and intersex people are recognized [@ezieDeconstructingBodyTransgender2010]. Therefore, research that centered sex assigned at birth or presupposed fundamental differences between trans and cis gender identities was excluded. 
+Finally, the author believes that there are no fundamental differences between cisgender men and women and transgender men and women. That is, there is nothing "essential" that cisgender people possess and know about their gender that transgender people fundamentally cannot also know or experience. Even arguments that center reproductive organs, or certain bodily functions, break down when sex is framed as construct and intersex people are recognized [@ezieDeconstructingBodyTransgender2010]. Therefore, research that centered sex assigned at birth or presupposed fundamental differences between trans and cis gender identities was excluded. 
