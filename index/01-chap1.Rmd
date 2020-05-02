@@ -14,7 +14,7 @@ This is, of course, an imperfect effort. Limitations in language used to discuss
 
 Secondly, the author believes that gender identity is entirely separate from sex assigned at birth. While it's true that cisgender people may have a hard time believing this, as their experience of gender has been entirely or mostly congruent with the sex they were assigned at birth [@hollebAZGenderSexuality2019], for trans and non-binary people, this narrative can be casually harmful at best, to deeply violent at worst. Sex and gender assigned at birth was intentionally excluded from this study, as the author believes that present gender identity should be the sole focus in studies of gender identity and gendered social experiences. 
 
-Finally, the author believes that there are no fundamental differences between cisgender men and women and transgender men and women. 
+Finally, the author believes that there are no fundamental differences between cisgender men and women and transgender men and women. That is, there is nothing "essential" that cisgender people possess and know about their gender that transgender people fundamentally cannot also know or experience. Even arguments that center reproductive organs or certain bodily functions break down when sex is framed as construct and intersex people are recognized [@ezieDeconstructingBodyTransgender2010]. Therefore, research that centered sex assigned at birth or presupposed fundamental differences between trans and cis gender identities was excluded. 
 
 ## Gender Identity
 
@@ -22,7 +22,7 @@ For some, gender is simply a stand-in term for sex [@auerbachSWSPRESIDENTGender1
 
 Gender identity is better understood as one's internal sense of gender and the gendered social roles that they choose [@kuperGenderIdentityDevelopment2018]. Generally, @kuperGenderIdentityDevelopment2018 frame gender identity adoption as an affirming process, in which one adopts the roles that most affirms their gender identity. Gender expression is the outward appearance one chooses in order to express their internal gender identity. 
 
-It should be noted that the roles that one relates to when forming one's gender identity are not limited to "man" and "woman," nor are they fixed over time. @diamondTransgenderExperienceIdentity2011 argues that gender identity is formed over time and is a constant process of changing one's social role and physical presentation and apperance to match one's internal gender identity. 
+It should be noted that the roles that one relates to when forming one's gender identity are not limited to "man" and "woman," nor are they fixed over time. @diamondTransgenderExperienceIdentity2011 argues that gender identity is formed over time and is a constant process of changing one's social role and physical presentation and appearance to match one's internal gender identity. The formation of each individual's gender identity is complex, multifaceted, and interlaced with the rest of their development. 
 
 ## Transgender Identities
 
@@ -45,3 +45,11 @@ Misgendering—the use of a pronoun that refers to someone in a way that is inco
 However, this still leaves the question of why trans people choose the pronouns they do and how they relate to their pronouns. @mcglashanUseAnyPronouns2018 performed a year-long ethnography of transgender schoolchildren in New Zealand who were part of an after school "Rainbow Group." They found that relationships to pronouns are complicated and fluid. Some students were frustrated that their options were limited and could not capture their gender identity. Others also took issue with the static nature of pronouns—in order to capture fluctuations in relationship to their gender, they prefer to change pronouns every meeting. Additionally, the instructors were concerned that requiring students to share their pronouns would be limiting and box them in. 
 
 This was, sadly, the *only* piece of literature the author found that was explicitly about individual's relationships to pronouns. Thus, much of the study was guided by her own experience as a transgender person.
+
+## Transgender Congruence Scale
+
+@kozeeMeasuringTransgenderIndividuals2012 developed the Transgender Congruence Scale (TCS) to quantify how congruent transgender people feel between their internal gender identity. The TCS was developed and validated on a transgender population. The TCS was included to provide a previously validated measure of congruence to evaluate how closely pronouns are related to one's relationship and closeness with their gender identity. 
+
+## Transgender Inclusive Behavior Scale
+
+@kattariDevelopmentValidationTransgender2018 developed the Transgender Inclusive Behavior Scale (TIBS) to quantify how many trans-inclusive behaviors people do. It includes questions about a number of behaviors, including sharing and asking for pronouns, using gender-neutral language, and keeping oneself up-to-date on policies that may affect trans people's lives. The TIBS was developed and validated for people of all genders, trans and cis. We included the TIBS as a proxy measure for how supportive one is of trans people by how conscientiously they practice trans-inclusive behaviors. 
