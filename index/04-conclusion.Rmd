@@ -1,5 +1,7 @@
 # Discussion
 
+We developed and administered a number of novel items that asked participants about their relationship and feelings towards their pronouns. We also expanded gender-related demographic questions to allow for freer self-identification while retaining significant diagnostic capability. These items were administered along with questions about gender congruence and trans-inclusive behaviors. 
+
 ## Gender Identity
 
 Gender identity is frequently assumed to be a binary or trinary, i.e. men, women, and—perhaps—non-binary people. In the present study, we created seven artificial gender groups based on answers to a series of questions that disaggregated gender identity (e.g. woman, agender, non-binary) and mode of relating to gender identity (e.g. cis, trans, non-binary). These groups are artificial in the sense that they do not fully convey any one participant's gender and were formed from participants' responses to questions about whether they identified as cisgender, transgender, and non-binary, and whether they wrote that they were a man or woman in the write-in gender field. 
@@ -80,4 +82,15 @@ Due to the global pandemic that occurred in early 2020, available time for data 
 
 Furthermore, to expedite analysis, gender groups were created. While this yielded some interesting and novel results, closer analysis could be done by using the many gender-related variables. For example, while we were able to compare cis and trans men, use of the gender groups prevented us from examining if manhood itself exerted any effects. While this would complicate the analysis required, we have the privilege of a large amount of very high-resolution data gender-related data. It would be a shame to not fully utilize it. 
 
+This may have also limited the possible analyses possible from analyzing the variance in the PCA components with TCS and TIBS scores. Because there were robust effects of gender group in TCS and TIBS scores, it may be that TCS and TIBS scores only served as proxies of gender group. Because there were robust gender differences in every retained PCA component, this may have been the reason we saw effects of congruence and trans-inclusive behaviors in each component as well. It may prove more useful to include individual answers to the TCS and TIBS items in the PCA model and observe how they load with the novel items we created in this study. 
+
 Additionally, it must be acknowledged that the scope of this study is limited to undergraduates from Reed College. This is a *very specific population* and likely does not generalize well. While this study may prove useful in guiding other research on pronouns and gives us a unique opportunity to make institution-specific recommendations, these items should be re-assessed and administered to a more diverse population in age, ethnicity, socio-economic class, and education, to name a few. 
+
+# Conclusion
+Gendered pronouns are a relatively novel area of study for transgender literature. Yet, pronouns are critical to trans people's identities and used every day as they communicate and navigate the world. To the author's knowlege, there has not been any large scale quantitative studies explicitly focused on pronouns. 
+
+We found that people of all genders use virtually all combinations of pronouns. This is important to keep in mind when navigating spaces on and off campus. It's likely that, even in a small group of people, assuming everyone's pronouns be misgendering one or more people. It's important to share and ask for pronouns when meeting new people. 
+
+Furthermore, one person sharing their pronouns will likely make everyone else feel significantly more comfortable sharing their pronouns. This is an easy but concrete way that cisgender people can support trans people. 
+
+Additionally, we found that relationship with pronouns is complicated and varried across genders. 

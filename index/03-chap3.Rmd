@@ -449,7 +449,7 @@ comfort_desc_setting_gender <- comfort_setting_data %>%
   summarise(mean = mean(val), sd = sd(val)) %>%
   desc_text()
 ```
-Items 1, 2, 3, 7, 8, and 9 touched on participant's comfort sharing their pronouns.
+Items 1 ("I feel comfortable sharing my pronouns in most settings."), 2 ("I feel comfortable sharing my pronouns in non-academic settings in the Reedcommunity."), 3 ("I feel comfortable sharing my pronouns in classes at Reed."), 7 ("I feel more comfortable sharing my pronouns if I am with people who may havesimilar gender identities to me."), 8 ("I feel more comfortable introducing myself with my pronouns if someone elsedoes first."), and 9 ("I feel more comfortable introducing myself with my pronouns in class if theprofessor does first.") touched on participant's comfort sharing their pronouns.
 A one-way ANOVA found a significant effect of setting, gender, and pronouns on comfort sharing pronouns, `r comfort_setting_anova$t[1]`. A post-hoc Tukey test found that generally, students are more comfortable sharing pronouns in class, `r comfort_desc_setting_factor$t[1]`, and in non-academic settings at Reed, `r comfort_desc_setting_factor$t[3]`, than they are in general, `r comfort_desc_setting_factor$t[2]`. It also found that cisgender men, `r comfort_desc_setting_gender$t[1]`, are more comfortable sharing their pronouns than trans men, `r comfort_desc_setting_gender$t[3]`, trans women, `r comfort_desc_setting_gender$t[4]`, and non-binary people, `r comfort_desc_setting_gender$t[6]`. 
 
 ```{r comfort_sharing_bysetting, echo = FALSE}
@@ -561,7 +561,7 @@ desire_setting_tukey <- desire_setting_anova_raw %>%
   tidy() %>%
   filter(adj.p.value < 0.05)
 ```
-Items 4, 5, and 6 touched on participant's desire to share their pronouns. A one-way ANOVA revealed significant effects of setting, `r desire_setting_anova$t[1]`, gender, `r desire_setting_anova$t[3]`, and pronouns `r desire_setting_anova$t[2]`. A post-hoc Tukey test revealed that people;s desire to share their pronouns is highest in classroom settings, followed by non-accade mic ettings atReed, and then lowest in general. Trans men reported a higher desire to share their pronouns than cisgender men, cisgender women, transgender women, cisgender non-binary people, and non-binary people. Transgender non-binary people also reported a higher desire to share their pronouns than cisgender men and non-binary people. 
+Items 4 ("I want to share my pronouns in most settings."), 5 ("I want to share my pronouns in non- academic settings in the Reed community."), and 6 ("I want to share my pronouns in classes at Reed.") touched on participant's desire to share their pronouns. A one-way ANOVA revealed significant effects of setting, `r desire_setting_anova$t[1]`, gender, `r desire_setting_anova$t[3]`, and pronouns `r desire_setting_anova$t[2]`. A post-hoc Tukey test revealed that people;s desire to share their pronouns is highest in classroom settings, followed by non-accade mic ettings atReed, and then lowest in general. Trans men reported a higher desire to share their pronouns than cisgender men, cisgender women, transgender women, cisgender non-binary people, and non-binary people. Transgender non-binary people also reported a higher desire to share their pronouns than cisgender men and non-binary people. 
 
 ### Concerns about sharing pronouns
 <!-- includes items 10, 11, 12 -->
@@ -583,7 +583,7 @@ concern_tukey <- concern_anova_raw %>%
   TukeyHSD() %>%
   tidy()
 ```
-Items 10, 11, and 12 touched on participant's concern that sharing their pronouns would draw unwanted attention to themselves. There were significant effects of setting, `r concern_anova$t[1]`, gender `r concern_anova$t[3]`, and pronouns, `r concern_anova$t[2]` on concern that sharing one's pronouns would draw unwanted attention to oneself. A post-hoc Tukey test revealed that participants were most concerned that sharing their pronouns would draw unwanted attention to them in general, followed by in non-academic settings at Reed, and least concerned in class. 
+Items 10 ("I am concerned that sharing my pronouns will draw unwanted attention tomyself in most settings."), 11 ("I am concerned that sharing my pronouns will draw unwanted attention tomyself in non-academic settings in the Reed community"), and 12 ("I am concerned that sharing my pronouns will draw unwanted attention tomyself in class at Reed.") touched on participant's concern that sharing their pronouns would draw unwanted attention to themselves. There were significant effects of setting, `r concern_anova$t[1]`, gender `r concern_anova$t[3]`, and pronouns, `r concern_anova$t[2]` on concern that sharing one's pronouns would draw unwanted attention to oneself. A post-hoc Tukey test revealed that participants were most concerned that sharing their pronouns would draw unwanted attention to them in general, followed by in non-academic settings at Reed, and least concerned in class. 
 
 ### Congruence and perception of pronouns
 <!-- includes items 13, 14, 15, 16, 17 18 -->
@@ -746,13 +746,15 @@ pca_all <- mod_data %>%
     students_share,
     reed_support,
     misgendering_freq,
-    misgendering_stigma
+    misgendering_stigma,
+    inclusive_behavior,
+    congruence
     ) %>%
   mutate(gender.man = as.numeric(gender.man), gender.woman = as.numeric(gender.woman), nonbinary = as.numeric(nonbinary), trans = as.numeric(trans), cis = as.numeric(cis)) %>%
   filter(complete.cases(.))
 
-pca_in <- pca_all %>% select(-c(pronoun_bin, gender_bin))
-pca_desc <-  pca_all %>% select(c(pronoun_bin, gender_bin))
+# don't include these variables in the PCA model
+pca_in <- pca_all %>% select(-c(pronoun_bin, gender_bin, inclusive_behavior, congruence))
 
 # perform PCA
 pca_out <- pca_in %>%
@@ -767,9 +769,9 @@ variance <- pca_out %>%
   tidy("pcs")
 eigenvals <- get_eigenvalue(pca_out) %>% mutate_if(is.numeric, round, digits = 2)
 ```
-Principal component analysis (PCA) was used on the pronoun and misgendering data. Using a Screen plot, we retained three components with an eigenvalue of `r eigenvals$eigenvalue[3]`, accounting for `r eigenvals$cumulative.variance.percent[3]`% of the variance.
+Principal component analysis (PCA) is a method of simplifying a model containing many variables to a small number of components that explain more variation than one component could do alone. We used PCA was used on the pronoun and misgendering data. Using a Screen plot, we retained three components with an eigenvalue of `r eigenvals$eigenvalue[3]`, accounting for `r eigenvals$cumulative.variance.percent[3]`% of the variance.
 
-```{r pca_loadings, echo = FALSE, results="asis", fig.cap="PCA Component Loadings"}
+```{r pca_loadings, echo = FALSE, results="asis", fig.cap="PCA Component Loadings."}
 # uncomment lines to have color coded cells based on factor loading
 loadings %>%
   kable(
@@ -837,12 +839,12 @@ pca_comp1_out <- tidy(pca_out, "u") %>%
   filter(PC == 1) %>%
   cbind(pca_all)
 comp1_anova_raw <- pca_comp1_out %>%
-  aov(value ~ gender_bin, .)
+  aov(value ~ gender_bin + factor(congruence) + factor(inclusive_behavior), .)
 comp1_anova <- tidy(comp1_anova_raw) %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", ", pval_text(p.value),sep = ""))
 comp1_tukey <- comp1_anova_raw %>%
-  TukeyHSD() %>%
+  TukeyHSD(which = c("gender_bin")) %>%
   tidy() %>%
   filter(adj.p.value < 0.05) %>%
   mutate_if(is.numeric, round, digits = 3)
@@ -852,7 +854,7 @@ comp1_desc <- pca_comp1_out %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
 ```
-```{r pca_comp_1_2, echo = FALSE, fig.height= 9, cache = TRUE, fig.cap = "PCA Components 1 & 2 by Gender"}
+```{r pca_comp_1_2, echo = FALSE, fig.height= 9, cache = TRUE, fig.cap = "PCA Components 1 & 2 by Gender. Percentage values along the axes represent % variation in the data explained by the component. "}
 pca_component_var <- tidy(pca_out, "pcs") %>% mutate_if(is.numeric, round, digits = 3) %>% mutate(t = paste("(", percent * 100, "%)", sep = ""))
 # graph of components 1 and 2, all genders
 pca_vis_all <- pca_out %>%
@@ -956,7 +958,7 @@ ggarrange(pca_vis_all,
           labels = "All individuals")
 ```
 
-A one-way ANOVA demonstrated a significant effect of gender on the first component, `r comp1_anova$t[1]`. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, and women, `r comp1_desc$t[2]`, are significantly less affected by cisnormativity than trans men, `r comp1_desc$t[3]`, trans women, `r comp1_desc$t[4]`, cisgender non-binary people, `r comp1_desc$t[5]`, non-binary people, `r comp1_desc$t[6]`, and transgender non-binary people, `r comp1_desc$t[7]`. Cisgender non-binary people are also less affected than trans men, trans women, non-binary people, and transgender non-binary people. Trans non-binary people are also more affected than non-binary people.  
+A one-way ANOVA demonstrated a significant effect of gender, `r comp1_anova$t[1]`, TCS scores, `r comp1_anova$t[2]`, and TIBS scores, `r comp1_anova$t[3]`, on the first component. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, and women, `r comp1_desc$t[2]`, are significantly less affected by cisnormativity than trans men, `r comp1_desc$t[3]`, trans women, `r comp1_desc$t[4]`, cisgender non-binary people, `r comp1_desc$t[5]`, non-binary people, `r comp1_desc$t[6]`, and transgender non-binary people, `r comp1_desc$t[7]`. Cisgender non-binary people are also less affected than trans men, trans women, non-binary people, and transgender non-binary people. Trans non-binary people are also more affected than non-binary people.  
 
 ```{r echo = FALSE, messages = FALSE, fig.cap = "PCA Component 1 by Gender", fig.width = 6.5}
 comp1_bimodal <- tidy(pca_out, "u") %>%
@@ -988,7 +990,7 @@ pca_comp2_out <- tidy(pca_out, "u") %>%
   filter(PC == 2) %>%
   cbind(pca_all)
 comp2_anova_raw <- pca_comp2_out %>%
-  aov(value ~ gender_bin, .)
+  aov(value ~ gender_bin + factor(congruence) + factor(inclusive_behavior), .)
 comp2_anova <- tidy(comp2_anova_raw) %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", *p* < 0.001",sep = ""))
@@ -1003,9 +1005,9 @@ comp2_desc <- pca_comp2_out %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
 ```
-Another one-way ANOVA demonstrated a significant effect of gender on the second component, `r comp2_anova$t[1]`. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, are less willing to share their pronouns than cisgender women, `r comp1_desc$t[2]` trans men, `r comp1_desc$t[3]`, and non-binary people, `r comp1_desc$t[6]`. Non-binary people are also more willing to share their pronouns than transgender women, `r comp1_desc$t[4]`. 
+Another one-way ANOVA demonstrated a significant effect of gender, `r comp2_anova$t[1]`, TCS scores, `r comp2_anova$t[2]`, and TIBS scores, `r comp2_anova$t[3]`, on the second component. A post-hoc Tukey test revealed that cisgender men, `r comp1_desc$t[1]`, are less willing to share their pronouns than cisgender women, `r comp1_desc$t[2]` trans men, `r comp1_desc$t[3]`, and non-binary people, `r comp1_desc$t[6]`. Non-binary people are also more willing to share their pronouns than transgender women, `r comp1_desc$t[4]`. 
 
-```{r, echo = FALSE, fig.height= 9, fig.cap = "PCA Components 1 & 3 by Gender"}
+```{r, echo = FALSE, fig.height= 9, fig.cap = "PCA Components 1 & 3 by Gender. Percentage values along the axes represent % variation in the data explained by the component. "}
 comp3_fill_data <- pca_all %>%
   mutate(match = factor(case_when(
     gender_bin == "Cis Man" ~ "Cis Man",
@@ -1057,7 +1059,7 @@ pca_comp3_out <- tidy(pca_out, "u") %>%
   filter(PC == 3) %>%
   cbind(pca_all)
 comp3_anova_raw <- pca_comp3_out %>%
-  aov(value ~ gender_bin, .)
+  aov(value ~ gender_bin + factor(congruence) + factor(inclusive_behavior), .)
 comp3_anova <- tidy(comp3_anova_raw) %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("*F*(", df, ", ", .$df[2], ") = ", statistic, ", *p* < 0.001",sep = ""))
@@ -1072,6 +1074,6 @@ comp3_desc <- pca_comp3_out %>%
   mutate_if(is.numeric, round, digits = 2) %>%
   mutate(t = paste("(*M* = ", mean, ", *SD* = ", sd, ")", sep = ""))
 ```
-A final one-way ANOVA demonstrated a significant effect of gender on the third component, `r comp3_anova$t[1]`. Non-binary people, `r comp1_desc$t[6]`, are significantly less concerned that sharing their pronouns will draw unwanted attention than cisgender men, `r comp1_desc$t[1]`, cisgender women, `r comp1_desc$t[2]`, transgender men `r comp1_desc$t[3]`, and transgender women `r comp1_desc$t[4]`. There were no significant effects between any other groups.
+A final one-way ANOVA demonstrated a significant effect of gender, `r comp3_anova$t[1]`, TCS scores, `r comp3_anova$t[2]`, and TIBS scores, `r comp3_anova$t[3]`, on the third component. Non-binary people, `r comp1_desc$t[6]`, are significantly less concerned that sharing their pronouns will draw unwanted attention than cisgender men, `r comp1_desc$t[1]`, cisgender women, `r comp1_desc$t[2]`, transgender men `r comp1_desc$t[3]`, and transgender women `r comp1_desc$t[4]`. There were no significant effects between any other groups.
 
-However, this may be due to the fact that this is the third component which only accounts for `r pca_component_var$percent[3] * 100`% of the total variation. Visualization of the third component shows that there is considerable variation within groups. 
+This may be due to the fact that this is the third component which only accounts for `r pca_component_var$percent[3] * 100`% of the total variation. Visualization of the third component shows that there is considerable variation within groups. This may be due to the orthogonal nature of PCA in which it attempts to find the line that explains the greatest amount of variation, given the constraints of the previous components. Given that the first component (cisnormativity) explains the greatest amount of variation, we see less variation in concern around sharing pronouns. 
