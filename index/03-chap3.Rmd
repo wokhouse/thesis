@@ -527,16 +527,18 @@ comfort_social_withsimilargenders_anova_raw <- comfort_social_withsimilargenders
   aov(val ~ gender_bin, .)
 comfort_social_withsimilargenders_anova <- comfort_social_withsimilargenders_anova_raw %>% tidy() %>% anova_text()
 comfort_social_withsimilargenders_tukey <- comfort_social_withsimilargenders_anova_raw %>% TukeyHSD() %>% tidy()
-# anova and tukey for prof first
+# anova and tukey for someone else first
 comfort_social_someoneelsefirst_data <- mod_data %>% select(ends_with("_bin"), comfort_someoneelsefirst) %>%
   filter(complete.cases(.)) %>%
   pivot_longer(starts_with("comfort_"), names_to = "factor", values_to = "val")
 comfort_social_someoneelsefirst_anova_raw <- comfort_social_someoneelsefirst_data %>%
   aov(val ~ gender_bin, .)
 comfort_social_someoneelsefirst_anova <- comfort_social_someoneelsefirst_anova_raw %>% tidy() %>% anova_text()
-comfort_social_someoneelsefirst_tukey <- comfort_social_someoneelsefirst_anova_raw %>% TukeyHSD() %>% tidy()
+comfort_social_someoneelsefirst_tukey <- comfort_social_someoneelsefirst_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.value < 0.05)
 ```
 A one-way ANOVA was used to examine effects of social factors, gender, and pronouns on comfort sharing pronouns. Specifically, we examined whether people were more comfortable sharing their pronouns when a professor did so first, when someone else did first, and when the participant was with people of similar genders to their own. There were significant effects of social factor, `r comfort_social_anova$t[1]`, gender, `r comfort_social_anova$t[3]`, and pronouns, `r comfort_social_anova$t[2]`. A post-hoc Tukey test revealed that someone else saying their pronouns first makes the largest difference in making others comfortable sharing their pronouns. This is followed by the professor sharing their pronouns first, and finally the presence of people of similar genders to one's own. 
+
+A post-hoc Tukey test revealed that, when someone else shares their pronouns, no one group feels signifiacntly more or less comfortable sharing their pronouns than any other. 
 
 ### Desire to share pronouns
 <!-- includes items 4, 5, 6 -->

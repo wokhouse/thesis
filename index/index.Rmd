@@ -56,7 +56,7 @@ library(thesisdown)
 
 <!-- On ordering the chapter files:
 There are two options:
-1. Name your chapter files in the order in which you want them to appear (e.g., 01-Inro, 02-Data, 03-Conclusions). 
+1. Name your chapter files in the order in which you want them to appear (e.g., 01-Intro, 02-Data, 03-Conclusions). 
 2. Otherwise, you can specify the order in which they appear in the _bookdown.yml (for PDF only).
 
 Do not include 00(two-hyphens)prelim.Rmd and 00-abstract.Rmd in the YAML file--they are handled in the YAML above differently for the PDF version.
@@ -68,4 +68,8 @@ on chapters.
 
 # Introduction {.unnumbered}
 
-Hello and welcome to my thesis. This will very much be an active document until at least May 1st, when it will be due. Join me as I write about pronouns :-)
+Pronouns are small words used to replace nouns in sentences [@Pronoun2020]. Gendered pronouns, in English, are third person pronouns that match the gender of the referent. The most common third person pronouns in English are "he," "she," and "they." "They" is commonly and widely recognized as a plural *and* singular pronoun [@They2019]. In the context of gender, pronouns are commonly notated as he/him, she/her, and they/them. 
+
+Trans people choose new names and/or pronouns that better reflect their gender identity. Use of chosen name and pronouns is associated with improved mental health [@russellChosenNameUse2018], whereas refusing to use chosen name (commonly known as deadnaming) or pronouns (misgendering) is associated with lower affect [@mclemoreExperiencesMisgenderingIdentity2015] and mental health outcomes [@russellChosenNameUse2018]. 
+
+However, beyond mental health outcomes and general acknowledgment of importance, relationships with pronouns have not yet been closely examined. In this study, we develop and administer a survey measuring congruence and comfort with pronouns. We also bring in existing measures of gender congruence and trans inclusive behaviors. This allows us to compare pronoun congruence with other aspects of gender congruence and attitudes and comfort with sharing pronouns to how intentionally one supports transgender people. 
