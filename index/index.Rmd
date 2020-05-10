@@ -22,7 +22,7 @@ abstract: |
 # like below, use a command like that for the abstract above.  Note that a tab is 
 # needed on the line after the `|`.
 acknowledgements: |
-  First and foremost, I would like to thank my adviser, Vasily, for his patience and continuous support as I changed the scope of my thesis over and over, well into February. Also go us for getting the biggest sample size in a thesis, maybe ever?
+  First and foremost, I would like to thank my advisor, Vasiliy, for his patience and continuous support as I changed the scope of my thesis over and over, well into February. Also go us for getting the biggest sample size in a thesis, maybe ever?
 
   Additionally, thank you to Greg for helping me figure out how to use magic i.e. use PCA, which I think most people will probably end up thinking is magic but whatever. It's just an undergraduate thesis. Sorry that I stopped coming to class but still came to your office hour for thesis help haha.
   
@@ -42,7 +42,7 @@ acknowledgements: |
   
   Thank you to Saxton, who *also* sat with me on the lawn as the world switched up it vibes. Because I got an extension on my thesis, I have the privlege of ripping your acknowledgement text for mine. 
   
-  Thank you to Saga who entertained bit after bit in the PARC when they really had no choice because they were at work. Also thank you for finally revealing the author's rhetorical purpose in your thesis. While I don't personally grasp what "g*y s*x" means, I trust you and the personal significance it holds for you. 
+  Thank you to Saga who entertained bit after bit in the PARC when they really had no choice because they were at work. Also thank you for finally revealing the author's rhetorical purpose in your thesis. While I don't personally grasp what "g\*y s\*x" means, I trust you and the personal significance it holds for you. 
   
   Thank you to my dear Reed College dolls: Mia, Beatrice, and Winn. How very feminist of us to queer higher-ed and our small liberal arts college in the Portland Northwest by transitioning while studying. Stunning. 
   

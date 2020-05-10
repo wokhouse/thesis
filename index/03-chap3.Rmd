@@ -19,6 +19,7 @@ library(factoextra)
 library(diptest)
 library(agricolae)
 library(pander)
+library(reshape2)
 source(here("index", "analysis", "qualtrics.R"))
 ```
 ```{r helper_functions, include = FALSE}
@@ -46,6 +47,10 @@ corr_text <- function(d, df) {
     mutate_if(is.numeric, round, digits = 2) %>%
     mutate(t = paste("*rs*(", df, ") = ", round(d$estimate, digits = 2), ", ", pval_text(d$p.value), sep = ""))
 }
+```
+```{r pca_colors, echo = FALSE}
+colors <- pal_jco("default")(8) %>% tail(7)
+colors[2] = "#925E9FFF"
 ```
 ## Demographics
 ```{r demo_desc, echo = F}
@@ -495,6 +500,31 @@ comfort_class_desc <- mod_data %>%
 ```
 One-way ANOVAs were used on each setting to elucidate effects of gender and pronoun within each setting. There were significant effects of gender in general, `r comfort_general_anova$t[1]`, in non-academic settings at Reed, `r comfort_reed_anova$t[1]`, and in class,  `r comfort_class_anova$t[1]`. There were also significant effects of pronouns in general, `r comfort_general_anova$t[1]`, in non-academic settings at Reed, `r comfort_reed_anova$t[1]`, and in class,  `r comfort_class_anova$t[1]`. 
 
+```{r, echo = FALSE, fig.height=9, fig.cap = "Responses to items 1 (\"I feel comfortable sharing my pronouns in most settings\"), 2 (\"I feel comfortable sharing my pronouns in non-academic settings in the Reed community\"), 3 (\"I feel comfortable sharing my pronouns in classes at Reed\")"}
+agree_likert <- c("Strongly disagree","Somewhat disagree","Neither agree nor disagree","Somewhat agree","Strongly agree")
+
+comfort_vis_data <- mod_data %>%
+  select(gender_bin, comfort_general, comfort_reed, comfort_class) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("comfort_"), names_to = "setting", values_to = "response") %>%
+  group_by(setting, gender_bin, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+comfort_vis_data %>%
+  ggplot(aes(
+    x = factor(setting, labels = c("Class", "Reed", "General"), levels = c("comfort_class", "comfort_reed", "comfort_general")), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ gender_bin) +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Setting") +
+  ylab("Percentage") +
+  theme(legend.position = c(0.52,0.16))
+```
+
 Post-hoc Tukey tests were used to compare gender groups within each setting. In a general setting, cis men, `r comfort_general_desc$t[1]`, were more comfortable sharing their pronouns than trans women, `r comfort_general_desc$t[2]`, non-binary people, `r comfort_general_desc$t[6]`, and transgender non-binary people, `r comfort_general_desc$t[7]`. In addition, cis women, `r comfort_general_desc$t[2]` were more comfortable sharing their pronouns than trans men, `r comfort_general_desc$t[3]`, trans women, cisgender non-binary people, `r comfort_general_desc$t[5]`, non-binary people, and transgender non-binary people. In non-academic settings at Reed, cis men, `r comfort_reed_desc$t[1]`, and cis women, `r comfort_reed_desc$t[1]`, were more comfortable sharing their pronouns than trans women, `r comfort_reed_desc$t[4]`, cis non-binary people, `r comfort_reed_desc$t[5]`, non-binary people, `r comfort_reed_desc$t[6]`, and trans non-binary people, `r comfort_reed_desc$t[7]`. In class, cis men, `r comfort_class_desc$t[1]`, and cis women, `r comfort_class_desc$t[2]`, were more comfortable sharing their pronouns than trans women, `r comfort_class_desc$t[4]`, non-binary people, `r comfort_class_desc$t[6]`, and trans non-binary people, `r comfort_class_desc$t[7]`. Cis women were also more comfortable sharing their pronouns than cis non-binary people, `r comfort_class_desc$t[5]`. Finally, trans women were less comfortable sharing their pronouns than cis non-binary people and trans non-binary people. 
 
 ```{r comfort_sharing_socialfactors, echo = FALSE}
@@ -543,11 +573,32 @@ comfort_social_someoneelsefirst_tukey <- comfort_social_someoneelsefirst_anova_r
 ```
 A one-way ANOVA was used to examine effects of social factors, gender, and pronouns on comfort sharing pronouns. Specifically, we examined whether people were more comfortable sharing their pronouns when a professor did so first, when someone else did first, and when the participant was with people of similar genders to their own. There were significant effects of social factor, `r comfort_social_anova$t[1]`, gender, `r comfort_social_anova$t[3]`, and pronouns, `r comfort_social_anova$t[2]`. A post-hoc Tukey test revealed that someone else saying their pronouns first makes the largest difference in making others comfortable sharing their pronouns. This is followed by the professor sharing their pronouns first, and finally the presence of people of similar genders to one's own. 
 
-A post-hoc Tukey test revealed that, when someone else shares their pronouns, no one group feels significantly more or less comfortable sharing their pronouns than any other. 
+```{r, echo = FALSE, fig.height=7, fig.cap = "Responses to items 7 (\"I feel more comfortable sharing my pronouns if I am with people who may have similar gender identities to me\"), 8 (\"I feel more comfortable introducing myself with my pronouns if someone else does first\"), and 9 (\"I feel more comfortable introducing myself with my pronouns in class if the professor does first\")"}
+comfort_factor_vis_data <- mod_data %>%
+  select(gender_bin, comfort_proffirst, comfort_withsimilargenders, comfort_someoneelsefirst) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("comfort_"), names_to = "setting", values_to = "response") %>%
+  group_by(setting, gender_bin, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+comfort_factor_vis_data %>%
+  ggplot(aes(
+    x = factor(setting, labels = c("Professor", "\nSomeone else", "Similar gender")), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ gender_bin) +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Social factor") +
+  ylab("Percentage") +
+  theme(legend.position = c(0.52,0.16))
+```
 
 ### Desire to share pronouns
 <!-- includes items 4, 5, 6 -->
-```{r comfort_sharing_blah, echo = FALSE, include=FALSE}
+```{r desire_sharing, echo = FALSE, include=FALSE}
 desire_setting_data <- mod_data %>%
   select(
     gender_bin,
@@ -567,6 +618,29 @@ desire_setting_tukey <- desire_setting_anova_raw %>%
   filter(adj.p.value < 0.05)
 ```
 Items 4 ("I want to share my pronouns in most settings"), 5 ("I want to share my pronouns in non- academic settings in the Reed community"), and 6 ("I want to share my pronouns in classes at Reed") touched on participant's desire to share their pronouns. A one-way ANOVA revealed significant effects of setting, `r desire_setting_anova$t[1]`, gender, `r desire_setting_anova$t[3]`, and pronouns `r desire_setting_anova$t[2]`. A post-hoc Tukey test revealed that people's desire to share their pronouns is highest in classroom settings, followed by non-academic settings at Reed, and then lowest in general. Trans men reported a higher desire to share their pronouns than cisgender men, cisgender women, transgender women, cisgender non-binary people, and non-binary people. Transgender non-binary people also reported a higher desire to share their pronouns than cisgender men and non-binary people. 
+
+```{r, echo = FALSE, fig.height=6, fig.cap = "Responses to items 4 (\"I want to share my pronouns in most settings\"), 5 (\"I want to share my pronouns in non- academic settings in the Reed community\"), and 6 (\"I want to share my pronouns in classes at Reed\")"}
+comfort_factor_vis_data <- mod_data %>%
+  select(gender_bin, desire_general, desire_reed, desire_class) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("desire_"), names_to = "setting", values_to = "response") %>%
+  group_by(setting, gender_bin, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+comfort_factor_vis_data %>%
+  ggplot(aes(
+    x = factor(setting, labels = c("General", "Reed", "Class"), levels = c("desire_general", "desire_reed", "desire_class")), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ gender_bin) +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Social factor") +
+  ylab("Percentage") +
+  theme(legend.position = c(0.52,0.16))
+```
 
 ### Concerns about sharing pronouns
 <!-- includes items 10, 11, 12 -->
@@ -588,7 +662,31 @@ concern_tukey <- concern_anova_raw %>%
   TukeyHSD() %>%
   tidy()
 ```
+
 Items 10 ("I am concerned that sharing my pronouns will draw unwanted attention to myself in most settings"), 11 ("I am concerned that sharing my pronouns will draw unwanted attention to myself in non-academic settings in the Reed community"), and 12 ("I am concerned that sharing my pronouns will draw unwanted attention to myself in class at Reed") touched on participant's concern that sharing their pronouns would draw unwanted attention to themselves. There were significant effects of setting, `r concern_anova$t[1]`, gender `r concern_anova$t[3]`, and pronouns, `r concern_anova$t[2]` on concern that sharing one's pronouns would draw unwanted attention to oneself. A post-hoc Tukey test revealed that participants were most concerned that sharing their pronouns would draw unwanted attention to them in general, followed by in non-academic settings at Reed, and least concerned in class. 
+
+```{r, echo = FALSE, fig.height=6, fig.cap = "Responses to items 10 (\"I am concerned that sharing my pronouns will draw unwanted attention to myself in most settings\"), 11 (\"I am concerned that sharing my pronouns will draw unwanted attention to myself in non-academic settings in the Reed community\"), and 12 (\"I am concerned that sharing my pronouns will draw unwanted attention to myself in class at Reed\")"}
+comfort_factor_vis_data <- mod_data %>%
+  select(gender_bin, attention_general, attention_reed, attention_class) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(starts_with("attention_"), names_to = "setting", values_to = "response") %>%
+  group_by(setting, gender_bin, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+comfort_factor_vis_data %>%
+  ggplot(aes(
+    x = factor(setting, labels = c("General", "Reed", "Class"), levels = c("attention_general", "attention_reed", "attention_class")), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ gender_bin) +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Social factor") +
+  ylab("Percentage") +
+  theme(legend.position = c(0.6,0.16))
+```
 
 ### Congruence and perception of pronouns
 <!-- includes items 13, 14, 15, 16, 17 18 -->
@@ -640,6 +738,31 @@ item15_desc <- item15_data %>% group_by(gender_bin) %>% summarise(mean = mean(pr
 ```
 On item 15 ("I feel that my pronouns represent my gender identity well."), there was a significant effect of gender, `r item15_anova$t[1]`. A post-hoc Tukey test revealed that cis men, `r item15_desc$t[1]`, and cis women, `r item15_desc$t[2]`, reported higher representativeness than cis non-binary people, `r item15_desc$t[5]`, non-binary people, `r item15_desc$t[6]`, and trans non-binary people, `r item15_desc$t[7]`. Furthermore, trans men, `r item15_desc$t[3]`, reported higher representativeness than cis non-binary people and non-binary people. There were no other significant differences between groups. 
 
+```{r, echo = FALSE, fig.height=6, fig.cap = "Responses to items  13 (\"I feel that the gender that people perceive me as and my pronouns are consistent with one another.\"), 14 (\"I feel that my internal gender identity and pronouns are consistent with one another.\"), and 15 (\"I feel that my pronouns represent my gender identity well.\")"}
+pronoun_cong_vis_data <- mod_data %>%
+  select(gender_bin, gender_perception_consistent, gender_pronouns_consistent, pronouns_represent) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(-gender_bin, names_to = "factor", values_to = "response") %>%
+  group_by(factor, gender_bin, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+pronoun_cong_vis_data %>%
+  ggplot(aes(
+    x = factor(factor,
+               levels = c("gender_perception_consistent", "gender_pronouns_consistent", "pronouns_represent"),
+               labels = c("Perception", "\nConsistent", "Represent")), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ gender_bin) +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Factor") +
+  ylab("Percentage") +
+  theme(legend.position = c(0.6,0.14))
+```
+
 ```{r item16, echo = FALSE}
 item16_data <- mod_data %>%
   select(
@@ -670,6 +793,31 @@ item17_desc <- item17_data %>% group_by(gender_bin) %>% summarise(mean = mean(as
 ```
 On item 17 ("I don’t need to tell people what my pronouns are, because they usually assume correctly."), there was a significant effect of gender, `r item17_anova$t[1]`. A post-hoc Tukey test revealed that people correctly assume cis men's, `r item17_desc$t[1]`, and cis women's, `r item17_desc$t[2]`, pronouns more frequently when compared to trans men, `r item17_desc$t[3]`, trans women, `r item17_desc$t[4]`, cis non-binary people, `r item17_desc$t[5]`, non-binary people, `r item17_desc$t[6]`, and trans non-binary people, `r item17_desc$t[7]`. Cis non-binary people's pronouns are also assumed correctly more frequently than trans women's and trans non-binary people. 
 
+```{r, echo = FALSE, fig.height=6, fig.cap = "responses to items 16 (\"If I don’t tell people what my pronouns are, they will misgender me.\") and 17 (\"I don’t need to tell people what my pronouns are, because they usually assume correctly.\")"}
+pronoun_assumption_vis_data <- mod_data %>%
+  select(gender_bin, willmisgender_ifnopronouns, assume_pronouns_correctly) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(-gender_bin, names_to = "factor", values_to = "response") %>%
+  group_by(factor, gender_bin, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+pronoun_assumption_vis_data %>%
+  ggplot(aes(
+    x = factor(factor,
+               levels = c("assume_pronouns_correctly", "willmisgender_ifnopronouns"),
+               labels = c("Assume correctly", "Will misgender")), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ gender_bin) +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Factor") +
+  ylab("Percentage") +
+  theme(legend.position = c(0.6,0.16))
+```
+
 ```{r item18, echo = FALSE}
 item18_data <- mod_data %>%
   select(
@@ -684,6 +832,27 @@ item18_tukey <- item18_anova_raw %>% TukeyHSD() %>% tidy() %>% filter(adj.p.valu
 item18_desc <- item18_data %>% group_by(gender_bin) %>% summarise(mean = mean(understand_better), sd = sd(understand_better)) %>% desc_text()
 ```
 Finally, on item 18 ("I feel like people understand me better when I share my pronouns."), there was a significant effect of gender, `r item18_anova$t[1]`. A post-hoc Tukey test revealed that trans men, `r item18_desc$t[3]`, trans women, `r item18_desc$t[4]`, non-binary people, `r item18_desc$t[6]`, and trans non-binary, `r item18_desc$t[7]`, people feel better understood when they share their pronouns when compared to cis men, `r item18_desc$t[1]` and cis women, `r item18_desc$t[2]`. 
+
+```{r, echo = FALSE, fig.height=6, fig.cap = "responses to items 18 (\"I feel like people understand me better when I share my pronouns.\")"}
+understanding_vis_data <- mod_data %>%
+  select(gender_bin, understand_better) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(-gender_bin, names_to = "factor", values_to = "response") %>%
+  group_by(factor, gender_bin, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+understanding_vis_data %>%
+  ggplot(aes(
+    x = factor(gender_bin, labels = c("Cis Man", "\nCis Woman", "Trans Man", "\nTrans Woman", "Cis Non-binary", "\nNon-binary", "Trans Non-binary")), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Factor") +
+  ylab("Percentage")
+```
 
 ### Historical experience at Reed College
 <!-- includes items 19, 20, 21 -->
@@ -793,10 +962,6 @@ Loadings from the second component encompasses one's desire to share one's prono
 
 Loadings from the third component emphasize concern that sharing one's pronouns will draw unwanted attention, as well as when others—not necessarily of the same gender—share their pronouns first and how consistent and representative one's pronouns are with one's gender. This component appears to represent concern around sharing pronouns and fears of judgment or lack of understanding about one's pronouns. While this may seem like the inverse of component 2, it's possible that one may not *want* to share their pronouns, but be relatively unconcerned that doing so would draw unwanted attention or harm. So, we retained component 3 in addition to component 2. 
 
-```{r pca_colors, echo = FALSE}
-colors <- pal_jco("default")(8) %>% tail(7)
-colors[2] = "#925E9FFF"
-```
 ```{r pca_vis_selection, echo = FALSE}
 fill_data <- pca_all %>%
   mutate(match = factor(case_when(
