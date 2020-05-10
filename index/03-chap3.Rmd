@@ -500,7 +500,7 @@ comfort_class_desc <- mod_data %>%
 ```
 One-way ANOVAs were used on each setting to elucidate effects of gender and pronoun within each setting. There were significant effects of gender in general, `r comfort_general_anova$t[1]`, in non-academic settings at Reed, `r comfort_reed_anova$t[1]`, and in class,  `r comfort_class_anova$t[1]`. There were also significant effects of pronouns in general, `r comfort_general_anova$t[1]`, in non-academic settings at Reed, `r comfort_reed_anova$t[1]`, and in class,  `r comfort_class_anova$t[1]`. 
 
-```{r, echo = FALSE, fig.height=9, fig.cap = "Responses to items 1 (\"I feel comfortable sharing my pronouns in most settings\"), 2 (\"I feel comfortable sharing my pronouns in non-academic settings in the Reed community\"), 3 (\"I feel comfortable sharing my pronouns in classes at Reed\")"}
+```{r, echo = FALSE, fig.height=6, fig.cap = "Responses to items 1 (\"I feel comfortable sharing my pronouns in most settings\"), 2 (\"I feel comfortable sharing my pronouns in non-academic settings in the Reed community\"), 3 (\"I feel comfortable sharing my pronouns in classes at Reed\")"}
 agree_likert <- c("Strongly disagree","Somewhat disagree","Neither agree nor disagree","Somewhat agree","Strongly agree")
 
 comfort_vis_data <- mod_data %>%
@@ -573,7 +573,7 @@ comfort_social_someoneelsefirst_tukey <- comfort_social_someoneelsefirst_anova_r
 ```
 A one-way ANOVA was used to examine effects of social factors, gender, and pronouns on comfort sharing pronouns. Specifically, we examined whether people were more comfortable sharing their pronouns when a professor did so first, when someone else did first, and when the participant was with people of similar genders to their own. There were significant effects of social factor, `r comfort_social_anova$t[1]`, gender, `r comfort_social_anova$t[3]`, and pronouns, `r comfort_social_anova$t[2]`. A post-hoc Tukey test revealed that someone else saying their pronouns first makes the largest difference in making others comfortable sharing their pronouns. This is followed by the professor sharing their pronouns first, and finally the presence of people of similar genders to one's own. 
 
-```{r, echo = FALSE, fig.height=7, fig.cap = "Responses to items 7 (\"I feel more comfortable sharing my pronouns if I am with people who may have similar gender identities to me\"), 8 (\"I feel more comfortable introducing myself with my pronouns if someone else does first\"), and 9 (\"I feel more comfortable introducing myself with my pronouns in class if the professor does first\")"}
+```{r, echo = FALSE, fig.height=6, fig.cap = "Responses to items 7 (\"I feel more comfortable sharing my pronouns if I am with people who may have similar gender identities to me\"), 8 (\"I feel more comfortable introducing myself with my pronouns if someone else does first\"), and 9 (\"I feel more comfortable introducing myself with my pronouns in class if the professor does first\")"}
 comfort_factor_vis_data <- mod_data %>%
   select(gender_bin, comfort_proffirst, comfort_withsimilargenders, comfort_someoneelsefirst) %>%
   filter(complete.cases(.)) %>%
@@ -833,7 +833,7 @@ item18_desc <- item18_data %>% group_by(gender_bin) %>% summarise(mean = mean(un
 ```
 Finally, on item 18 ("I feel like people understand me better when I share my pronouns."), there was a significant effect of gender, `r item18_anova$t[1]`. A post-hoc Tukey test revealed that trans men, `r item18_desc$t[3]`, trans women, `r item18_desc$t[4]`, non-binary people, `r item18_desc$t[6]`, and trans non-binary, `r item18_desc$t[7]`, people feel better understood when they share their pronouns when compared to cis men, `r item18_desc$t[1]` and cis women, `r item18_desc$t[2]`. 
 
-```{r, echo = FALSE, fig.height=6, fig.cap = "responses to items 18 (\"I feel like people understand me better when I share my pronouns.\")"}
+```{r, echo = FALSE, fig.height=5.5, fig.cap = "Responses to items 18 (\"I feel like people understand me better when I share my pronouns.\")"}
 understanding_vis_data <- mod_data %>%
   select(gender_bin, understand_better) %>%
   filter(complete.cases(.)) %>%
