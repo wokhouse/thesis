@@ -1,0 +1,62 @@
+---
+title: "Pronouns Good or Bad: Attitudes and Relationships with Gendered Pronouns in Gender-Diverse Undergraduates"
+author: Jade Fung
+date: May 5th, 2020
+output: 
+  ioslides_presentation:
+    widescreen: true
+autosize: true
+bibliography: thesis.bib
+---
+
+## Background & Definitions
+- Pronoun: third-person gendered pronouns such as "she"
+- Gender identity: one's internal sense of gender, relationship to many identities simaltaneously
+- Cisgender: a descriptor for a gender identity that has a close relationship to one's gender assigned at birth
+- Transgender: a descriptor for a gender identity that is different from one's gender assigned at birth
+- Non-binary: a gender identity or relationship with gender that does not neatly fit into "man" or "woman"
+
+## Objective
+- Pronouns are very important to trans and non-binary people. However, they have not been examined in any detail. 
+- Do cis and trans people have different relationships with pronouns?
+- More broadly, do cis and trans people have different gendered experiences?
+
+## Previously Validated Items
+- Transgender Congruence Scale (TCS) [@kozeeMeasuringTransgenderIndividuals2012]
+  - Measure of gender congruence
+  - Designed for transgender people
+  - Included as a comparison for novel items about pronoun congruence
+- Trans-inclusive Behavior Scale (TIBS) [@kattariDevelopmentValidationTransgender2018]
+  - Measure of how many trans-inclusive behavoirs one does
+  - Designed for people of all genders
+- Misgendering frequency [@mclemoreExperiencesMisgenderingIdentity2015]
+  - Two items about how frequently one is misgendered and how stigmatized that makes one feel
+  - Designed for transgender people
+  
+## Novel items
+- Gender Pronoun Attitude Survey (GPAS)
+  - Institution-specific questions about comfort sharing pronouns
+  - Questions about congruence and relationships with pronouns
+- Gender demographics
+  - Are you cisgender?
+  - Are you transgender?
+  - Is your gender non-binary?
+
+## Participants
+- *N* = 477 undergrads, 33% of student body
+- Not ethnically diverse, aproximately representative of Reed student body
+- Median age was 20 (M = 20.14, SD = 1.32)
+- 102 first years, 118 second years, 131 third years, and 120 fourth years
+- 38 majors
+
+## Misgendering freq.
+![misgendering freq](img/misgnederingfreq.png)
+
+## TCS Scores
+![tcs scores](img/tcs.png)
+
+## TIBS Scores
+![tibs scores](img/tibs.png)
+
+## Primary Component Analysis
+## References
