@@ -4,7 +4,7 @@ library(rjson)
 library(here)
 library(dotenv)
 
-# store survey id in .env file in top directory of repo
+# store survey id in .env file in index/
 SURVEYID <- Sys.getenv("SURVEYID")
 # fetch survey data from qualtrics
 survey_dat <- fetch_survey(surveyID = SURVEYID)
