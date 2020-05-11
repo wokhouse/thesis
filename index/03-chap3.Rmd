@@ -20,6 +20,7 @@ library(diptest)
 library(agricolae)
 library(pander)
 library(reshape2)
+library(RColorBrewer)
 source(here("index", "analysis", "qualtrics.R"))
 ```
 ```{r helper_functions, include = FALSE}
@@ -593,7 +594,7 @@ comfort_factor_vis_data %>%
   labs(fill = "Response") +
   xlab("Social factor") +
   ylab("Percentage") +
-  theme(legend.position = c(0.52,0.16))
+  theme(legend.position = c(0.6,0.13))
 ```
 
 ### Desire to share pronouns
@@ -685,7 +686,7 @@ comfort_factor_vis_data %>%
   labs(fill = "Response") +
   xlab("Social factor") +
   ylab("Percentage") +
-  theme(legend.position = c(0.6,0.16))
+  theme(legend.position = c(0.6,0.13))
 ```
 
 ### Congruence and perception of pronouns
@@ -751,7 +752,7 @@ pronoun_cong_vis_data %>%
   ggplot(aes(
     x = factor(factor,
                levels = c("gender_perception_consistent", "gender_pronouns_consistent", "pronouns_represent"),
-               labels = c("Perception", "\nConsistent", "Represent")), 
+               labels = c("Perception", "\nInternal", "Represent")), 
     y = freq, fill = factor(response, labels = agree_likert))
   ) +
   geom_bar(stat = "identity") +
@@ -760,7 +761,7 @@ pronoun_cong_vis_data %>%
   labs(fill = "Response") +
   xlab("Factor") +
   ylab("Percentage") +
-  theme(legend.position = c(0.6,0.14))
+  theme(legend.position = c(0.6,0.13))
 ```
 
 ```{r item16, echo = FALSE}
@@ -793,7 +794,7 @@ item17_desc <- item17_data %>% group_by(gender_bin) %>% summarise(mean = mean(as
 ```
 On item 17 ("I don’t need to tell people what my pronouns are, because they usually assume correctly."), there was a significant effect of gender, `r item17_anova$t[1]`. A post-hoc Tukey test revealed that people correctly assume cis men's, `r item17_desc$t[1]`, and cis women's, `r item17_desc$t[2]`, pronouns more frequently when compared to trans men, `r item17_desc$t[3]`, trans women, `r item17_desc$t[4]`, cis non-binary people, `r item17_desc$t[5]`, non-binary people, `r item17_desc$t[6]`, and trans non-binary people, `r item17_desc$t[7]`. Cis non-binary people's pronouns are also assumed correctly more frequently than trans women's and trans non-binary people. 
 
-```{r, echo = FALSE, fig.height=6, fig.cap = "responses to items 16 (\"If I don’t tell people what my pronouns are, they will misgender me.\") and 17 (\"I don’t need to tell people what my pronouns are, because they usually assume correctly.\")"}
+```{r, echo = FALSE, fig.height=6, fig.cap = "Responses to items 16 (\"If I don’t tell people what my pronouns are, they will misgender me.\") and 17 (\"I don’t need to tell people what my pronouns are, because they usually assume correctly.\")"}
 pronoun_assumption_vis_data <- mod_data %>%
   select(gender_bin, willmisgender_ifnopronouns, assume_pronouns_correctly) %>%
   filter(complete.cases(.)) %>%
@@ -806,7 +807,7 @@ pronoun_assumption_vis_data %>%
   ggplot(aes(
     x = factor(factor,
                levels = c("assume_pronouns_correctly", "willmisgender_ifnopronouns"),
-               labels = c("Assume correctly", "Will misgender")), 
+               labels = c("Assume correctly", "\nWill misgender")), 
     y = freq, fill = factor(response, labels = agree_likert))
   ) +
   geom_bar(stat = "identity") +
@@ -815,7 +816,7 @@ pronoun_assumption_vis_data %>%
   labs(fill = "Response") +
   xlab("Factor") +
   ylab("Percentage") +
-  theme(legend.position = c(0.6,0.16))
+  theme(legend.position = c(0.6,0.13))
 ```
 
 ```{r item18, echo = FALSE}
@@ -833,7 +834,7 @@ item18_desc <- item18_data %>% group_by(gender_bin) %>% summarise(mean = mean(un
 ```
 Finally, on item 18 ("I feel like people understand me better when I share my pronouns."), there was a significant effect of gender, `r item18_anova$t[1]`. A post-hoc Tukey test revealed that trans men, `r item18_desc$t[3]`, trans women, `r item18_desc$t[4]`, non-binary people, `r item18_desc$t[6]`, and trans non-binary, `r item18_desc$t[7]`, people feel better understood when they share their pronouns when compared to cis men, `r item18_desc$t[1]` and cis women, `r item18_desc$t[2]`. 
 
-```{r, echo = FALSE, fig.height=5.5, fig.cap = "Responses to items 18 (\"I feel like people understand me better when I share my pronouns.\")"}
+```{r, echo = FALSE, fig.height=5.5, fig.cap = "Responses to item 18 (\"I feel like people understand me better when I share my pronouns.\")"}
 understanding_vis_data <- mod_data %>%
   select(gender_bin, understand_better) %>%
   filter(complete.cases(.)) %>%
@@ -850,7 +851,7 @@ understanding_vis_data %>%
   geom_bar(stat = "identity") +
   scale_fill_brewer(palette = "Spectral") +
   labs(fill = "Response") +
-  xlab("Factor") +
+  xlab("Gender") +
   ylab("Percentage")
 ```
 
@@ -871,7 +872,7 @@ common_majors <- mod_data %>%
   filter(!is.na(major)) %>%
   group_by(major) %>%
   tally() %>%
-  filter(n > 5) %>%
+  filter(n > 6) %>%
   pull(major)
 # there is also a significant effect of age buuuuuuuuut no time! :-)
 commonmajors_profshare_anova_raw <- mod_data %>%
@@ -881,11 +882,94 @@ commonmajors_profshare_anova <- commonmajors_profshare_anova_raw %>% tidy() %>% 
 commonmajors_studentsshare_anova_raw <- mod_data %>%
   filter(major %in% common_majors) %>%
   aov(students_share ~ gender_bin + major, .)
-commonmajors_studentsshare_anova <- commonmajors_profshare_anova_raw %>% tidy() %>% anova_text()
+commonmajors_studentsshare_anova <- commonmajors_studentsshare_anova_raw %>% tidy() %>% anova_text()
+commonmajors_studentsshare_desc <- mod_data %>%
+  filter(major %in% common_majors) %>%
+  select(gender_bin, students_share) %>%
+  filter(complete.cases(.)) %>%
+  group_by(gender_bin) %>%
+  summarise(mean = mean(students_share), sd = sd(students_share)) %>%
+  desc_text()
+commonmajors_studentsshare_tukey <- commonmajors_studentsshare_anova_raw %>% 
+  TukeyHSD() %>% 
+  tidy() %>%
+  filter(adj.p.value < 0.05) %>%
+  mutate_if(is.numeric, round, digits = 3)
 ```
-Item 19 ("In classes at Reed, professors usually introduce themselves with their pronouns") asked students to report how frequently professors introduced themselves with their pronouns. A one-way ANOVA did not find a significant effect of gender, `r allmajors_profshare_anova$t[1]`, or major, `r allmajors_profshare_anova$t[2]`, on reported frequency of professors sharing their pronouns. However, when we only compared majors in which we had more than 5 students in, there were significant effects of both gender, `r commonmajors_profshare_anova$t[1]`, and major, `r commonmajors_profshare_anova$t[2]`. 
+Item 19 ("In classes at Reed, professors usually introduce themselves with their pronouns") asked students to report how frequently professors introduced themselves with their pronouns. A one-way ANOVA did not find a significant effect of gender, `r allmajors_profshare_anova$t[1]`, or major, `r allmajors_profshare_anova$t[2]`, on reported frequency of professors sharing their pronouns. However, when we only compared majors in which we had more than 6 students in, there was a significant effect of major, `r commonmajors_profshare_anova$t[2]`, but not gender, `r commonmajors_profshare_anova$t[1]`. 
 
-Item 20 ("In classes at Reed, students usually introduce themselves with their pronouns") asked students to report how often their peers introduced themselves with their pronouns. A one-way ANOVA revealed a significant effect of gender, `r allmajors_studentsshare_anova$t[1]`, but not major. When we only compared majors that we had more than 5 students in, there were significant effects of gender, `r commonmajors_studentsshare_anova$t[1]`, and major, `r commonmajors_studentsshare_anova$t[2]`. It should be noted that this could mean certain genders are more perceptive to others sharing their pronouns, or that some departments make a greater effort to normalize pronoun introductions, or another variable. 
+```{r, echo = FALSE, fig.height=5.5, fig.cap = "Responses to items 19 (\"In classes at Reed, professors usually introduce themselves with their pronouns\")"}
+profsshare_vis_data <- mod_data %>%
+  filter(major %in% common_majors) %>%
+  select(major, profs_share) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(-major, names_to = "factor", values_to = "response") %>%
+  group_by(factor, major, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+profshare_vis_order <- mod_data %>%
+  filter(major %in% common_majors) %>%
+  group_by(major) %>%
+  summarise(mean = mean(profs_share)) %>%
+  arrange(-mean) %>%
+  pull(major)
+
+profshare_vis_labels <- profshare_vis_order %>% recode("political science,environmental studies" = "poli sci, enviro sci")
+
+profsshare_vis_data %>%
+  ggplot(aes(
+    x = factor(major, levels = profshare_vis_order, labels = profshare_vis_labels), 
+    y = freq, fill = factor(response, labels = agree_likert))
+  ) +
+  geom_bar(stat = "identity") +
+  geom_hline(yintercept = 50, linetype = "dashed") +
+  scale_fill_brewer(palette = "Spectral") +
+  labs(fill = "Response") +
+  xlab("Major") +
+  ylab("Percentage") +
+  theme(axis.text.x = element_text(angle = 90), legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=2,byrow=TRUE))
+```
+
+Item 20 ("In classes at Reed, students usually introduce themselves with their pronouns") asked students to report how often their peers introduced themselves with their pronouns. A one-way ANOVA revealed a significant effect of gender, `r allmajors_studentsshare_anova$t[1]`, but not major. When we only compared majors that we had more than 6 students in, there were significant effects of gender, `r commonmajors_studentsshare_anova$t[1]`, but not major, `r commonmajors_studentsshare_anova$t[2]`. A post-hoc Tukey test revealed that trans women, `r commonmajors_studentsshare_desc$t[4]`, report that students share their pronouns significantly less than cis men, `r commonmajors_studentsshare_desc$t[1]`, cis women, `r commonmajors_studentsshare_desc$t[2]`, cis non-binary people, `r commonmajors_studentsshare_desc$t[5]`, and non-binary people, `r commonmajors_studentsshare_desc$t[6]` do. 
+
+```{r, echo = FALSE, fig.height=5.5, fig.cap = "Responses to items 20 (\"In classes at Reed, students usually introduce themselves with their pronouns\")"}
+studentsshare_vis_data <- mod_data %>%
+  filter(major %in% common_majors) %>%
+  select(major, students_share) %>%
+  filter(complete.cases(.)) %>%
+  pivot_longer(-major, names_to = "factor", values_to = "response") %>%
+  group_by(factor, major, response) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n) * 100)
+
+studentsshare_vis_order <- mod_data %>%
+  filter(major %in% common_majors) %>%
+  group_by(major) %>%
+  summarise(mean = mean(students_share)) %>%
+  arrange(-mean) %>%
+  pull(major)
+
+studentsshare_vis_labels <- studentsshare_vis_order %>% recode("political science,environmental studies" = "poli sci, enviro sci")
+
+studentsshare_vis_data %>%
+  ggplot(aes(
+    x = factor(major, levels = studentsshare_vis_order, labels = studentsshare_vis_labels), 
+    y = freq, fill = factor(response, labels = agree_likert[2:5]))
+  ) +
+  geom_bar(stat = "identity") +
+  geom_hline(yintercept = 50, linetype = "dashed") +
+  scale_fill_manual(values = brewer.pal(5,"Spectral")[2:5]) +
+  labs(fill = "Response") +
+  xlab("Major") +
+  ylab("Percentage") +
+  theme(axis.text.x = element_text(angle = 90), legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=2,byrow=TRUE))
+```
+
+
+It should be noted that no participants responded "Strongly disagree" to item 20, indicating that it's common for at least some students to share their pronouns in most classes. 
 
 ### Primary Component Analysis
 ```{r pca, echo = FALSE}

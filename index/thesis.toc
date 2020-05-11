@@ -27,16 +27,16 @@
 \contentsline {subsection}{\numberline {3.5.3}Concerns about sharing pronouns}{22}{subsection.3.5.3}%
 \contentsline {subsection}{\numberline {3.5.4}Congruence and perception of pronouns}{24}{subsection.3.5.4}%
 \contentsline {subsection}{\numberline {3.5.5}Historical experience at Reed College}{27}{subsection.3.5.5}%
-\contentsline {subsection}{\numberline {3.5.6}Primary Component Analysis}{28}{subsection.3.5.6}%
-\contentsline {chapter}{Chapter 4: Discussion}{35}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Gender Identity}{35}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Pronouns}{37}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Experiences with Misgendering}{38}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Gender Congruence}{38}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Transgender Inclusive Behaviors}{38}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Primary Component Analysis}{38}{section.4.6}%
-\contentsline {section}{\numberline {4.7}Cisgender People}{40}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Limitations}{41}{section.4.8}%
-\contentsline {chapter}{Chapter 5: Conclusion}{43}{chapter.5}%
-\contentsline {chapter}{Appendix}{45}{appendix*.20}%
-\contentsline {chapter}{References}{53}{appendix*.21}%
+\contentsline {subsection}{\numberline {3.5.6}Primary Component Analysis}{29}{subsection.3.5.6}%
+\contentsline {chapter}{Chapter 4: Discussion}{37}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Gender Identity}{37}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Pronouns}{39}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Experiences with Misgendering}{40}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Gender Congruence}{40}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Transgender Inclusive Behaviors}{40}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Primary Component Analysis}{40}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Cisgender People}{42}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Limitations}{43}{section.4.8}%
+\contentsline {chapter}{Chapter 5: Conclusion}{45}{chapter.5}%
+\contentsline {chapter}{Appendix}{47}{appendix*.22}%
+\contentsline {chapter}{References}{55}{appendix*.23}%
