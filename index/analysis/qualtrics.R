@@ -2,9 +2,12 @@ library(tidyverse)
 library(qualtRics)
 library(rjson)
 library(here)
+library(dotenv)
 
+# store survey id in .env file in top directory of repo
+SURVEYID <- Sys.getenv("SURVEYID")
 # fetch survey data from qualtrics
-survey_dat <- fetch_survey(surveyID = "***REMOVED***")
+survey_dat <- fetch_survey(surveyID = SURVEYID)
 # read in themes from qualatative analysis
 themes <- fromJSON(file = here("index", "analysis", "themes.json"))
 gender_themes <- themes$gender
